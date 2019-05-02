@@ -62,7 +62,7 @@ void MainWindow::msg(const QString &title, const QString &content)
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
     static bool showScrollBar=true;
-    if(e->modifiers() == Qt::ShiftModifier && e->key() == Qt::Key_S){
+    if((e->modifiers() == Qt::ShiftModifier) && (e->key() == Qt::Key_S)){
         //如果是Shift键，按一次隐藏滑动条，再按一次显示滑动条
         if(showScrollBar){
             ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
