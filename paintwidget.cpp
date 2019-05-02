@@ -9,15 +9,21 @@ PaintWidget::PaintWidget(QWidget *parent) :
     QWidget(parent)
 {
     isDrawing = false;
-    image = QImage(700,500,QImage::Format_RGB32);
+    _image = QImage(700,500,QImage::Format_RGB32);
     backColor = qRgb(255,255,255);
-    image.fill(backColor);
+    _image.fill(backColor);
+}
+
+void PaintWidget::setImage(QImage image)
+{
+    _image = image;
+    update();
 }
 
 void PaintWidget::paintEvent(QPaintEvent *){
 
     QPainter painter(this);
-    painter.drawImage(0,0,image);
+    painter.drawImage(0,0,_image);
 }
 
 void PaintWidget::mousePressEvent(QMouseEvent *event){
@@ -32,12 +38,12 @@ void PaintWidget::mouseMoveEvent(QMouseEvent *event){ //重点理解部分
 
     if(event->buttons() & Qt::LeftButton){
         endPoint = event->pos();
-        paint(image);
+        paint(_image);
  }
 }
 void PaintWidget::mouseReleaseEvent(QMouseEvent *event){
     isDrawing = false;
-    paint(image);
+    paint(_image);
 }
 
 

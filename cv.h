@@ -10,9 +10,9 @@ class CVFunctions : public QObject
 public:
     explicit CVFunctions(QObject *parent = nullptr);
     bool open(const QString &im_path);
-    bool open(const QImage &image);
+    bool open(QImage &image);
     QImage canny(int threshold1, int threshold2);
-    QImage withCannny(int threshold1, int threshold2);
+    QImage withCanny(int threshold1, int threshold2);
     QImage mask();
 private:
     cv::Mat _canny;

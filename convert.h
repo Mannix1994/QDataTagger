@@ -24,7 +24,7 @@
  * @param rb_swap 只针对 CV_8UC3 格式，如果 true 则会调换 R 与 B RGB->BGR，如果共享内存的话原始图像也会发生变化
  * @return 转换后的 QImage 图像
 */
-QImage toQImage(const cv::Mat& mat, bool clone = true, bool rb_swap = true);
+QImage toQImage(cv::Mat& mat, bool swap = true);
 
 /**
  * @brief 将 QImage 的类型图像转换为 cv::Mat 类型
@@ -33,7 +33,7 @@ QImage toQImage(const cv::Mat& mat, bool clone = true, bool rb_swap = true);
  * @param rg_swap 只针对 RGB888 格式，如果 true 则会调换 R 与 B RGB->BGR，如果共享内存的话原始图像也会发生变化
  * @return 转换后的 cv::Mat 图像
 */
-cv::Mat toMat(QImage &image, bool clone = false, bool rb_swap = true);
+cv::Mat toMat(QImage &image, bool swap = true);
 
 #endif
 

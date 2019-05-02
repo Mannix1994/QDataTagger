@@ -19,7 +19,9 @@ public:
     ~MainWindow();
 
 private:
-    void setImage(QString im_path);
+    void setImage(QString im_path="");
+    void msg(const QString &content);
+    void msg(const QString  &title, const QString &content);
 
 private slots:
     void on_pb_open_clicked();

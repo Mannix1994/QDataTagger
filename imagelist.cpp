@@ -30,7 +30,8 @@ bool ImageList::open(const QString &list_file)
 QString ImageList::pre()
 {
     QString s;
-    if (--index>0){
+    if (index>0){
+        --index;
         s = image_list[index];
     }
     return s;
@@ -39,7 +40,8 @@ QString ImageList::pre()
 QString ImageList::next()
 {
     QString s;
-    if (++index<image_list.length()){
+    if (index<image_list.length()-1){
+        ++index;
         s = image_list[index];
     }
     return s;

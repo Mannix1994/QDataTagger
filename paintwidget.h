@@ -11,7 +11,7 @@ class PaintWidget : public QWidget
     Q_OBJECT
 public:
     explicit PaintWidget(QWidget *parent = 0);//------------构造函数
-
+    void setImage(QImage image);
 
 public  slots:
 
@@ -27,7 +27,7 @@ signals:
 
 private:
 
-    QImage image;//-----------------------------------------一块画布
+    QImage _image;//-----------------------------------------一块画布
     QRgb backColor;//---------------------------------------画布背景色
     QPoint lastPoint;//-------------------------------------前一个点，因为线是由无数点组成的
     QPoint endPoint;//--------------------------------------后一个点(结束点)

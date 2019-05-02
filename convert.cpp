@@ -1,72 +1,79 @@
 #include "convert.h"
+#include <QMessageBox>
 
-QImage cvMat2QImage(const cv::Mat& mat, bool clone, bool rb_swap)
-{
-    const uchar *pSrc = (const uchar*)mat.data;
-    // 8-bits unsigned, NO. OF CHANNELS = 1
-    if(mat.type() == CV_8UC1)
-    {
-        //QImage image(mat.cols, mat.rows, QImage::Format_Grayscale8);
-        QImage image(pSrc, mat.cols, mat.rows, mat.step, QImage::Format_Grayscale8);
-        if(clone) return image.copy();
-        return image;
-    }
-    // 8-bits unsigned, NO. OF CHANNELS = 3
-    else if(mat.type() == CV_8UC3)
-    {
-        // Create QImage with same dimensions as input Mat
-        QImage image(pSrc, mat.cols, mat.rows, mat.step, QImage::Format_RGB888);
-        if(clone)
-        {
-            if(rb_swap) return image.rgbSwapped();
-            return image.copy();
-        }
-        else
-        {
-            if(rb_swap)
-            {
-                cv::cvtColor(mat, mat, CV_BGR2RGB);
-            }
-            return image;
-        }
+QImage toQImage(cv::Mat &mat, bool swap) {
+  switch (mat.type())
+  {
+     // 8-bit, 4 channel
+     case CV_8UC4:
+     {
+        if(swap)
+            cv::cvtColor(mat, mat, cv::COLOR_BGRA2RGBA);
+        QImage image(mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB32);
+        return image.rgbSwapped().copy();
+     }
 
-    }
-    else if(mat.type() == CV_8UC4)
-    {
-        qDebug() << "CV_8UC4";
-        QImage image(pSrc, mat.cols, mat.rows, mat.step, QImage::Format_ARGB32);
-        if(clone) return image.copy();
-        return image;
-    }
-    else
-    {
-        qDebug() << "ERROR: Mat could not be converted to QImage.";
-        return QImage();
-    }
+     // 8-bit, 3 channel
+     case CV_8UC3:
+     {
+        if(swap)
+            cv::cvtColor(mat, mat, cv::COLOR_BGR2RGB);
+        QImage image( mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888 );
+        return image.rgbSwapped().copy();
+     }
+
+     // 8-bit, 1 channel
+     case CV_8UC1:
+     {
+        static QVector<QRgb>  sColorTable;
+        // only create our color table once
+        if (sColorTable.isEmpty())
+        {
+           for ( int i = 0; i < 256; ++i )
+              sColorTable.push_back(qRgb( i, i, i ));
+        }
+        QImage image( mat.data, mat.cols, mat.rows, mat.step, QImage::Format_Indexed8);
+        image.setColorTable(sColorTable);
+        return image.copy();
+     }
+
+     default:
+        qDebug("Image format is not supported: depth=%d and %d channels\n", mat.depth(), mat.channels());
+        break;
+  }
+  return QImage();
 }
 
-cv::Mat QImage2cvMat(QImage &image, bool clone, bool rb_swap)
-{
-    cv::Mat mat;
-    //qDebug() << image.format();
-    switch(image.format())
-    {
-    case QImage::Format_ARGB32:
-    case QImage::Format_RGB32:
-    case QImage::Format_ARGB32_Premultiplied:
-        mat = cv::Mat(image.height(), image.width(), CV_8UC4, (void *)image.constBits(), image.bytesPerLine());
-        if(clone)  mat = mat.clone();
+cv::Mat toMat(QImage &image, bool swap) {
+  switch (image.format())
+  {
+     // 8-bit, 4 channel
+     case QImage::Format_RGB32:
+     {
+        //if (swap)
+        //   image = image.rgbSwapped();
+        cv::Mat mat(image.height(), image.width(), CV_8UC4, const_cast<uchar*>(image.bits()), image.bytesPerLine());
+        return mat.clone();
+     }
+     // 8-bit, 3 channel
+     case QImage::Format_RGB888:
+     {
+      if (swap)
+          image = image.rgbSwapped();
+        return cv::Mat(image.height(), image.width(), CV_8UC3, const_cast<uchar*>(image.bits()), image.bytesPerLine() ).clone();
+     }
+
+     // 8-bit, 1 channel
+     case QImage::Format_Indexed8:
+     {
+        cv::Mat  mat(image.height(), image.width(), CV_8UC1, const_cast<uchar*>(image.bits()), image.bytesPerLine());
+        return mat.clone();
+     }
+
+     default:
+        qDebug("Image format is not supported: depth=%d and %d format\n", image.depth(), image.format());
         break;
-    case QImage::Format_RGB888:
-        mat = cv::Mat(image.height(), image.width(), CV_8UC3, (void *)image.constBits(), image.bytesPerLine());
-        if(clone)  mat = mat.clone();
-        if(rb_swap) cv::cvtColor(mat, mat, CV_BGR2RGB);
-        break;
-    case QImage::Format_Indexed8:
-    case QImage::Format_Grayscale8:
-        mat = cv::Mat(image.height(), image.width(), CV_8UC1, (void *)image.bits(), image.bytesPerLine());
-        if(clone)  mat = mat.clone();
-        break;
-    }
-    return mat;
+  }
+
+  return cv::Mat();
 }
