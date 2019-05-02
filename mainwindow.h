@@ -23,6 +23,9 @@ private:
     void msg(const QString &content);
     void msg(const QString  &title, const QString &content);
 
+protected:
+    void keyPressEvent(QKeyEvent *e);
+
 private slots:
     void on_pb_open_clicked();
 
@@ -47,6 +50,8 @@ private slots:
     void on_sb_scale_valueChanged(int arg1);
 
     void on_sb_pensize_valueChanged(int arg1);
+
+    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;

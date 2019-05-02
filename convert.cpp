@@ -50,8 +50,8 @@ cv::Mat toMat(QImage &image, bool swap) {
      // 8-bit, 4 channel
      case QImage::Format_RGB32:
      {
-        //if (swap)
-        //   image = image.rgbSwapped();
+//        if (swap)
+//           image = image.rgbSwapped();
         cv::Mat mat(image.height(), image.width(), CV_8UC4, const_cast<uchar*>(image.bits()), image.bytesPerLine());
         return mat.clone();
      }

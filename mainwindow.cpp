@@ -4,6 +4,7 @@
 #include <QStandardPaths>
 #include <QDebug>
 #include <QMessageBox>
+#include <QScrollBar>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -27,6 +28,10 @@ void MainWindow::setImage(QString im_path)
 {
     if (im_path==""){
         im_path = _imageList.current();
+    }
+    if(im_path==""){
+        msg("检查是否打开包含图片列表的文件");
+        return;
     }
     if(!_cvf.open(im_path)){
         msg("图像: \"" + im_path + "\" 无法打开");
@@ -54,13 +59,35 @@ void MainWindow::msg(const QString &title, const QString &content)
     QMessageBox::information(this, title, content, QMessageBox::Ok);
 }
 
+void MainWindow::keyPressEvent(QKeyEvent *e)
+{
+    static bool showScrollBar=true;
+    if(e->modifiers() == Qt::ShiftModifier && e->key() == Qt::Key_S){
+        //如果是Shift键，按一次隐藏滑动条，再按一次显示滑动条
+        if(showScrollBar){
+            ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+            ui->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        }else{
+            ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            ui->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        }
+        showScrollBar = !showScrollBar;
+    }
+    e->accept();
+}
+
 void MainWindow::on_pb_open_clicked()
 {
     QString home_path = QStandardPaths::standardLocations(QStandardPaths::HomeLocation)[0];
     QString list_file = QFileDialog::getOpenFileName(this, QString(),home_path,"TXT (*.txt)");
     qDebug() << list_file;
-    _imageList.open(list_file);
-    setImage();
+    if (list_file == "")
+        return;
+    if (_imageList.open(list_file))
+        setImage();
+    else{
+        msg("打开列表文件失败啦");
+    }
 }
 
 void MainWindow::on_pb_pre_clicked()
@@ -143,4 +170,9 @@ void MainWindow::on_sb_scale_valueChanged(int arg1)
 void MainWindow::on_sb_pensize_valueChanged(int arg1)
 {
     _area->setPenSize(arg1);
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    _area->cancel();
 }

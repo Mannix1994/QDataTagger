@@ -7,26 +7,30 @@
 #include<QDebug>
 
 PaintWidget::PaintWidget(QWidget *parent) :
-    QWidget(parent), _isDrawing(false), _penSize(5), _scale(1)
+    QWidget(parent), _isDrawing(false), _penSize(5), _scale(1), _maxHistorySize(5)
 {
     _image = QImage(1,1,QImage::Format_RGB32);
     backColor = qRgb(255,255,255);
     _image.fill(backColor);
-    setFocusPolicy(Qt::StrongFocus);
 }
 
 void PaintWidget::setImage(QImage image)
 {
-    _image = image;
+
     _size = image.size();
+    _image = image.scaled(_size*_scale);
+    _history.push_back(_image.copy());
     update();
 }
 
 void PaintWidget::setScale(int scale)
 {
-    _image = _image.scaled(_size*scale);
     _scale = scale;
-    update();
+    if(!_image.isNull()){
+        _image = _image.scaled(_size*scale);
+        setMinimumSize(_image.size());
+        update();
+    }
 }
 
 void PaintWidget::setPenSize(int size)
@@ -35,6 +39,17 @@ void PaintWidget::setPenSize(int size)
         return;
     }
     this->_penSize = size;
+}
+
+void PaintWidget::cancel()
+{
+    if(_history.size()>1)
+    {
+        auto size = _history.last().size();
+        _history.removeLast();
+        _image = _history.last().scaled(size);
+        update();
+    }
 }
 
 void PaintWidget::paintEvent(QPaintEvent *){
@@ -48,9 +63,6 @@ void PaintWidget::mousePressEvent(QMouseEvent *event){
         lastPoint = event->pos();
         endPoint = event->pos();
         _isDrawing = true;
-    }else if(event->button() == Qt::RightButton){
-        qDebug() << _history.size();
-
     }
 }
 
@@ -67,25 +79,12 @@ void PaintWidget::mouseReleaseEvent(QMouseEvent *event){
     if(_isDrawing == true)
     {
         _history.push_back(_image.copy());
-        if(_history.size()>3){
+        if(_history.size()>_maxHistorySize){
             _history.removeFirst();
         }
     }
     _isDrawing = false;
 }
-
-void PaintWidget::keyPressEvent(QKeyEvent *event)
-{
-    if((event->key() == Qt::Key_Z) && (event->modifiers()==Qt::ControlModifier)){
-        if(_history.size()>1)
-        {
-            _history.removeLast();
-            _image = _history.last();
-            update();
-        }
-    }
-}
-
 
 void PaintWidget::paint(QImage &theImage){
     QPainter p(&theImage);

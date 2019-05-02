@@ -16,6 +16,7 @@ public:
     void setImage(QImage image);
     void setScale(int scale);
     void setPenSize(int size);
+    void cancel();
 public  slots:
 
 
@@ -24,8 +25,6 @@ protected:
     void mousePressEvent(QMouseEvent *event);//------------------鼠标按下事件
     void mouseMoveEvent(QMouseEvent *event);//-------------------鼠标移动事件(重点理解)
     void mouseReleaseEvent(QMouseEvent *event);//----------------鼠标释放事件
-    void keyPressEvent(QKeyEvent *event);
-
     void paint(QImage &theImage);//-------------------------画图工具
 signals:
 
@@ -38,6 +37,7 @@ private:
     bool _isDrawing;//---------------------------------------判断是否在绘图也就是判断鼠标是否操作
     int _penSize;//笔的大小
     int _scale;
+    int _maxHistorySize;
     QImage _origin;
     QSize _size;
     QList<QImage> _history;

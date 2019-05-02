@@ -3,7 +3,7 @@
 #include"convert.h"
 #include<QMessageBox>
 
-CVFunctions::CVFunctions(QObject *parent) : QObject(parent)
+CVFunctions::CVFunctions(QObject *parent) : QObject(parent), _open(false)
 {
 
 }

@@ -13,6 +13,7 @@ public:
     explicit CVFunctions(QObject *parent = nullptr);
     bool open(const QString &im_path);
     bool open(QImage &image);
+    bool isOpened();
     QImage canny(int blur, int threshold1, int threshold2, bool show=false);
     QImage withCanny(int blur, int threshold1, int threshold2, bool show=false);
     QImage mask(bool show=false);
@@ -24,6 +25,7 @@ private:
     cv::Mat _origin;
     cv::Mat _mask;
     cv::Mat _gray;
+    bool _open;
 signals:
 
 public slots:
