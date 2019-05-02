@@ -32,21 +32,26 @@ bool CVFunctions::open(QImage &image)
     else{
         QMessageBox::critical(nullptr, "警告", "错误33: 不支持此类型的图像");
     }
-    _mask = cv::Mat(_origin.size(), CV_8UC1);
+    _mask = cv::Mat(_origin.size(), CV_8UC1, cv::Scalar::all(0));
     return true;
 }
 
-QImage CVFunctions::canny(int threshold1, int threshold2)
+QImage CVFunctions::canny(int blur, int threshold1, int threshold2, bool show)
 {
     cv::Mat _canny;
-    cv::Canny(_gray, _canny, threshold1, threshold2);
+    cv::blur(_gray, _canny, cv::Size(blur, blur));
+    cv::Canny(_canny, _canny, threshold1, threshold2);
+    if(show){
+        showMat("Canny", _canny);
+    }
     return toQImage(_canny);
 }
 
-QImage CVFunctions::withCanny(int threshold1, int threshold2)
+QImage CVFunctions::withCanny(int blur, int threshold1, int threshold2, bool show)
 {
     cv::Mat _canny;
-    cv::Canny(_gray, _canny, threshold1, threshold2);
+    cv::blur(_gray, _canny, cv::Size(blur, blur));
+    cv::Canny(_canny, _canny, threshold1, threshold2);
     cv::Mat mat = _origin.clone();
     //cv::imshow("_origin1", _origin);
     //cv::imshow("mat", mat);
@@ -72,10 +77,55 @@ QImage CVFunctions::withCanny(int threshold1, int threshold2)
         QMessageBox::critical(nullptr, "错误", "错误72: 不支持此类型的图像");
     }
     //cv::waitKey(50);
+    if(show){
+        showMat("原图+Canny", mat);
+    }
     return toQImage(mat);
 }
 
-QImage CVFunctions::mask()
+QImage CVFunctions::mask(bool show)
 {
+    if(show){
+        showMat("Mask", _mask);
+    }
     return toQImage(_mask);
+}
+
+QImage CVFunctions::origin(bool show)
+{
+    if(show){
+        showMat("原图", _origin);
+    }
+    return toQImage(_origin);
+}
+
+void CVFunctions::showMat(std::string title, cv::Mat &mat)
+{
+    cv::namedWindow(title, cv::WINDOW_NORMAL);
+    cv::imshow(title, mat);
+    cv::waitKey(1);
+}
+
+void CVFunctions::closeWindow(CVFunctions::WINDOW window)
+{
+    switch (window) {
+    case CANNY:
+        cv::namedWindow("Canny");
+        cv::destroyWindow("Canny");
+        break;
+    case MASK:
+        cv::namedWindow("Mask");
+        cv::destroyWindow("Mask");
+        break;
+    case WITH_CANNY:
+        cv::namedWindow("原图+Canny");
+        cv::destroyWindow("原图+Canny");
+        break;
+    case ORIGIN:
+        cv::namedWindow("原图");
+        cv::destroyWindow("原图");
+        break;
+    default:
+        break;
+    }
 }

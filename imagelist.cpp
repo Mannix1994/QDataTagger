@@ -55,3 +55,8 @@ QString ImageList::current()
         return "";
     }
 }
+
+bool ImageList::empty()
+{
+    return image_list.empty();
+}

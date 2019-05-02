@@ -3,7 +3,7 @@
 #include <QFileDialog>
 #include <QStandardPaths>
 #include <QDebug>
-#include<QMessageBox>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -29,9 +29,19 @@ void MainWindow::setImage(QString im_path)
         im_path = _imageList.current();
     }
     if(!_cvf.open(im_path)){
-        msg("图像：" + im_path + "无法打开");
+        msg("图像: \"" + im_path + "\" 无法打开");
+        return;
     }
-    _area->setImage(_cvf.withCanny(ui->sb_threshold1->value(), ui->sb_threshold2->value()));
+    auto withCanny = _cvf.withCanny(ui->cb_blur->currentText().toInt(), ui->sb_threshold1->value(), ui->sb_threshold2->value(),
+                                    ui->cb_origin_canny->isChecked());
+    auto canny = _cvf.canny(ui->cb_blur->currentText().toInt(), ui->sb_threshold1->value(), ui->sb_threshold2->value(),
+                            ui->cb_canny->isChecked());
+    auto origin = _cvf.origin(ui->cb_origin->isChecked());
+    auto mask = _cvf.mask(ui->cb_mask->isChecked());
+    _area->setImage(withCanny);
+    ui->la_canny->setPixmap(QPixmap::fromImage(canny.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
+    ui->la_origin->setPixmap(QPixmap::fromImage(origin.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
+    ui->la_mask->setPixmap(QPixmap::fromImage(mask.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
 }
 
 void MainWindow::msg(const QString &content)
@@ -73,4 +83,54 @@ void MainWindow::on_pb_next_clicked()
         return;
     }
     setImage(im_path);
+}
+
+void MainWindow::on_sb_threshold1_valueChanged(int arg1)
+{
+    Q_UNUSED(arg1);
+    setImage();
+}
+
+void MainWindow::on_sb_threshold2_valueChanged(int arg1)
+{
+    Q_UNUSED(arg1);
+    setImage();
+}
+
+void MainWindow::on_cb_blur_currentIndexChanged(int index)
+{
+    Q_UNUSED(index);
+    setImage();
+}
+
+void MainWindow::on_cb_origin_canny_clicked()
+{
+    if (ui->cb_origin_canny->isChecked())
+        setImage();
+    else
+        _cvf.closeWindow(CVFunctions::WITH_CANNY);
+}
+
+void MainWindow::on_cb_origin_clicked()
+{
+    if (ui->cb_origin->isChecked())
+        setImage();
+    else
+        _cvf.closeWindow(CVFunctions::ORIGIN);
+}
+
+void MainWindow::on_cb_canny_clicked()
+{
+    if (ui->cb_canny->isChecked())
+        setImage();
+    else
+        _cvf.closeWindow(CVFunctions::CANNY);
+}
+
+void MainWindow::on_cb_mask_clicked()
+{
+    if (ui->cb_mask->isChecked())
+        setImage();
+    else
+        _cvf.closeWindow(CVFunctions::MASK);
 }

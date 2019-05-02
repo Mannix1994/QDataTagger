@@ -30,6 +30,20 @@ private slots:
 
     void on_pb_next_clicked();
 
+    void on_sb_threshold1_valueChanged(int arg1);
+
+    void on_sb_threshold2_valueChanged(int arg1);
+
+    void on_cb_blur_currentIndexChanged(int index);
+
+    void on_cb_origin_canny_clicked();
+
+    void on_cb_origin_clicked();
+
+    void on_cb_canny_clicked();
+
+    void on_cb_mask_clicked();
+
 private:
     Ui::MainWindow *ui;
     PaintWidget *_area;//-----------------------------------创建一个画板组件

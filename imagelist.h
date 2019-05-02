@@ -13,6 +13,7 @@ public:
     QString pre();
     QString next();
     QString current();
+    bool empty();
 private:
     int index;
     QVector<QString> image_list;
