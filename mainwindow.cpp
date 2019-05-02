@@ -72,6 +72,10 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
             ui->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         }
         showScrollBar = !showScrollBar;
+    }else if(e->key() == Qt::Key_A){
+        on_pb_pre_clicked();
+    }else if(e->key() == Qt::Key_D){
+        on_pb_next_clicked();
     }
     e->accept();
 }
