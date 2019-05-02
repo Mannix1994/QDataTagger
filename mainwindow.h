@@ -44,6 +44,10 @@ private slots:
 
     void on_cb_mask_clicked();
 
+    void on_sb_scale_valueChanged(int arg1);
+
+    void on_sb_pensize_valueChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
     PaintWidget *_area;//-----------------------------------创建一个画板组件

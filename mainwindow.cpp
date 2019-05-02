@@ -134,3 +134,13 @@ void MainWindow::on_cb_mask_clicked()
     else
         _cvf.closeWindow(CVFunctions::MASK);
 }
+
+void MainWindow::on_sb_scale_valueChanged(int arg1)
+{
+    _area->setScale(arg1);
+}
+
+void MainWindow::on_sb_pensize_valueChanged(int arg1)
+{
+    _area->setPenSize(arg1);
+}
