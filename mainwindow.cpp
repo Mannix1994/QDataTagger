@@ -158,10 +158,10 @@ void MainWindow::on_cb_mode_currentIndexChanged(const QString &arg1)
 {
     if(arg1 == "涂抹"){
         _area->setPenColor(qRgb(255, 255, 255));
-        ui->sb_pensize->setValue(10);
+        ui->sb_pensize->setValue(6);
     }else if(arg1 == "消除"){
         _area->setPenColor(qRgb(0, 255, 0));
-        ui->sb_pensize->setValue(20);
+        ui->sb_pensize->setValue(15);
     }else if(arg1 == "标记"){
         _area->setPenColor(qRgb(255, 255, 0));
         ui->sb_pensize->setValue(1);
@@ -250,11 +250,18 @@ void MainWindow::on_pb_save_clicked()
         auto im_info = QFileInfo(ui->statusBar->currentMessage());
         auto im_name = im_info.fileName();
         auto save_path = ui->le_save->text();
+        if (save_path == ""){
+            msg("保存路径为空");
+            return;
+        }
         auto dir = QDir(save_path);
         if(!dir.exists()){
             auto button = QMessageBox::information(this, "提示", "保存目录不存在，是否创建?", QMessageBox::Ok, QMessageBox::Cancel);
             if(button == QMessageBox::Ok){
-                dir.mkpath(save_path);
+                if(!dir.mkpath(save_path)){
+                    msg("创建保存目录失败，请检查保存是否有权限读写保存路径");
+                    return;
+                }
             }
         }
         QDir origin_dir = save_path+("/origin");
@@ -266,7 +273,11 @@ void MainWindow::on_pb_save_clicked()
             mask_dir.mkpath(mask_dir.absolutePath());
         }
         qDebug()<<origin_dir.absolutePath() +"/" +im_name;
-        image.save(origin_dir.absolutePath() + "/"+im_name);
-        mask.save(mask_dir.absolutePath() + "/"+im_name);
+        if(!image.save(origin_dir.absolutePath() + "/"+im_name)){
+            msg("保存原图失败，请检查保存目录是否存在");
+        }
+        if(!mask.save(mask_dir.absolutePath() + "/"+im_name)){
+            msg("保存Mask图失败，请检查保存目录是否存在");
+        }
     }
 }

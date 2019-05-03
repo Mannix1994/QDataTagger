@@ -9,7 +9,14 @@ class CVFunctions : public QObject
 {
     Q_OBJECT
 public:
+    class WINDDOW_STRING
+    {
+    public:
+        WINDDOW_STRING();
+        std::string CANNY, WITH_CANNY, MASK, ORIGIN;
+    };
     typedef enum {CANNY, WITH_CANNY, MASK, ORIGIN} WINDOW;
+
     explicit CVFunctions(QObject *parent = nullptr);
     bool open(const QString &im_path);
     bool open(QImage &image);
@@ -20,16 +27,18 @@ public:
     QImage mask(const QImage &image, bool show=false);
     QImage origin(bool show=false);
     QImage origin(const QImage &image, bool show=false);
-    void showMat(std::string title, cv::Mat &mat);
     void closeWindow(WINDOW window);
 private:
     cv::Mat canny_(int blur, int threshold1, int threshold2);
+    void showMat(std::string title, cv::Mat &mat);
     cv::Mat _origin;
     cv::Mat _origin_minus_1;
     cv::Mat _mask;
     cv::Mat _gray;
     cv::Mat _canny;
     bool _open;
+    WINDDOW_STRING ws;
+
 signals:
 
 public slots:

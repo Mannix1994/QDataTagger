@@ -50,7 +50,7 @@ QImage CVFunctions::canny(int blur, int threshold1, int threshold2, bool show)
 {
     auto _canny = canny_(blur, threshold1, threshold2);
     if(show){
-        showMat("Canny", _canny);
+        showMat(ws.CANNY, _canny);
     }
     return toQImage(_canny);
 }
@@ -59,8 +59,6 @@ QImage CVFunctions::withCanny(int blur, int threshold1, int threshold2, bool sho
 {
     auto _canny = canny_(blur, threshold1, threshold2);
     cv::Mat mat = _origin_minus_1.clone();
-    //cv::imshow("_origin1", _origin);
-    //cv::imshow("mat", mat);
     if(mat.type() == CV_8UC4)
     {
         for(int i=0;i<_origin_minus_1.rows;++i){
@@ -92,9 +90,8 @@ QImage CVFunctions::withCanny(int blur, int threshold1, int threshold2, bool sho
     else{
         QMessageBox::critical(nullptr, "错误", "错误72: 不支持此类型的图像");
     }
-    //cv::waitKey(50);
     if(show){
-        showMat("原图+Canny", mat);
+        showMat(ws.WITH_CANNY, mat);
     }
     return toQImage(mat);
 }
@@ -102,7 +99,7 @@ QImage CVFunctions::withCanny(int blur, int threshold1, int threshold2, bool sho
 QImage CVFunctions::mask(bool show)
 {
     if(show){
-        showMat("Mask", _mask);
+        showMat(ws.MASK, _mask);
     }
     return toQImage(_mask);
 }
@@ -144,7 +141,7 @@ QImage CVFunctions::mask(const QImage &image, bool show)
 QImage CVFunctions::origin(bool show)
 {
     if(show){
-        showMat("原图", _origin);
+        showMat(ws.ORIGIN, _origin);
     }
     return toQImage(_origin);
 }
@@ -181,7 +178,7 @@ QImage CVFunctions::origin(const QImage &image, bool show)
         QMessageBox::critical(nullptr, "错误", "错误181: 不支持此类型的图像");
     }
     if(show){
-        showMat("原图", im);
+        showMat(ws.ORIGIN, im);
     }
     return toQImage(im);
 }
@@ -197,20 +194,20 @@ void CVFunctions::closeWindow(CVFunctions::WINDOW window)
 {
     switch (window) {
     case CANNY:
-        cv::namedWindow("Canny");
-        cv::destroyWindow("Canny");
+        cv::namedWindow(ws.CANNY);
+        cv::destroyWindow(ws.CANNY);
         break;
     case MASK:
-        cv::namedWindow("Mask");
-        cv::destroyWindow("Mask");
+        cv::namedWindow(ws.MASK);
+        cv::destroyWindow(ws.MASK);
         break;
     case WITH_CANNY:
-        cv::namedWindow("原图+Canny");
-        cv::destroyWindow("原图+Canny");
+        cv::namedWindow(ws.WITH_CANNY);
+        cv::destroyWindow(ws.WITH_CANNY);
         break;
     case ORIGIN:
-        cv::namedWindow("原图");
-        cv::destroyWindow("原图");
+        cv::namedWindow(ws.ORIGIN);
+        cv::destroyWindow(ws.ORIGIN);
         break;
     default:
         break;
@@ -222,4 +219,9 @@ cv::Mat CVFunctions::canny_(int blur, int threshold1, int threshold2)
     cv::blur(_gray, _canny, cv::Size(blur, blur));
     cv::Canny(_canny, _canny, threshold1, threshold2);
     return _canny;
+}
+
+CVFunctions::WINDDOW_STRING::WINDDOW_STRING():CANNY("Canny"), WITH_CANNY("原图+Canny"), MASK("Mask"), ORIGIN("原图")
+{
+
 }
