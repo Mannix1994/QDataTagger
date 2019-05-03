@@ -27,15 +27,17 @@ bool CVFunctions::open(QImage &image)
     }
     _origin = toMat(image, true);
     _origin_1 = _origin - 1;
+    // 求灰度图
     if (_origin_1.type() == CV_8UC4)
         cv::cvtColor(_origin_1, _gray, cv::COLOR_BGRA2GRAY);
     else if(_origin_1.type() == CV_8UC3)
         cv::cvtColor(_origin_1, _gray, cv::COLOR_BGR2GRAY);
-    else if(_origin_1.type() == CV_8UC3)
+    else if(_origin_1.type() == CV_8UC1)
         _gray = _origin_1.clone();
     else{
         QMessageBox::critical(nullptr, "警告", "错误33: 不支持此类型的图像");
     }
+    // 定义一个空的Mask
     _mask = cv::Mat(_origin_1.size(), CV_8UC1, cv::Scalar::all(0));
     _open = true;
     return true;
