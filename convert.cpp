@@ -15,7 +15,10 @@ QImage toQImage(const cv::Mat &mat, bool swap) {
      case CV_8UC3:
      {
         QImage image( mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888 );
-        return image.copy();
+        if(swap)
+            return image.copy().rgbSwapped();
+        else
+            return image.copy();
      }
 
      // 8-bit, 1 channel
@@ -52,7 +55,12 @@ cv::Mat toMat(const QImage &image, bool swap) {
      // 8-bit, 3 channel
      case QImage::Format_RGB888:
      {
-        return cv::Mat(image.height(), image.width(), CV_8UC3, const_cast<uchar*>(image.bits()), image.bytesPerLine() ).clone();
+        QImage s;
+        if(swap)
+            s = image.rgbSwapped();
+        else
+            s = image.copy();
+        return cv::Mat(s.height(), s.width(), CV_8UC3, const_cast<uchar*>(s.bits()), s.bytesPerLine() ).clone();
      }
 
      // 8-bit, 1 channel

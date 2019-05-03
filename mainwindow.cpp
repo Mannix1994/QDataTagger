@@ -23,10 +23,7 @@ MainWindow::~MainWindow()
     delete _area;
 }
 
-/**
- * @brief MainWindow::setImage 获取当前
- * @param im_path
- */
+
 void MainWindow::setImage(QString im_path)
 {
     if (im_path==""){

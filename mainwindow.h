@@ -29,37 +29,21 @@ protected:
 
 private slots:
     void on_pb_open_clicked();
-
     void on_pb_pre_clicked();
-
     void on_pb_next_clicked();
-
     void on_sb_threshold1_valueChanged(int arg1);
-
     void on_sb_threshold2_valueChanged(int arg1);
-
     void on_cb_blur_currentIndexChanged(int index);
-
     void on_sb_scale_valueChanged(int arg1);
-
     void on_sb_pensize_valueChanged(int arg1);
-
     void on_cb_mode_currentIndexChanged(const QString &arg1);
-
     void on_image_changed();
-
     void on_cb_origin_canny_clicked(bool checked);
-
     void on_cb_origin_clicked(bool checked);
-
     void on_cb_canny_clicked(bool checked);
-
     void on_cb_mask_clicked(bool checked);
-
     void on_pb_choose_clicked();
-
     void on_pb_cancel_clicked();
-
     void on_pb_save_clicked();
 
 private:
