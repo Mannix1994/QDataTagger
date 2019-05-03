@@ -26,17 +26,17 @@ bool CVFunctions::open(QImage &image)
         return false;
     }
     _origin = toMat(image, true);
-    _origin_minus_1 = _origin - 1;
-    if (_origin_minus_1.type() == CV_8UC4)
-        cv::cvtColor(_origin_minus_1, _gray, cv::COLOR_BGRA2GRAY);
-    else if(_origin_minus_1.type() == CV_8UC3)
-        cv::cvtColor(_origin_minus_1, _gray, cv::COLOR_BGR2GRAY);
-    else if(_origin_minus_1.type() == CV_8UC3)
-        _gray = _origin_minus_1.clone();
+    _origin_1 = _origin - 1;
+    if (_origin_1.type() == CV_8UC4)
+        cv::cvtColor(_origin_1, _gray, cv::COLOR_BGRA2GRAY);
+    else if(_origin_1.type() == CV_8UC3)
+        cv::cvtColor(_origin_1, _gray, cv::COLOR_BGR2GRAY);
+    else if(_origin_1.type() == CV_8UC3)
+        _gray = _origin_1.clone();
     else{
         QMessageBox::critical(nullptr, "警告", "错误33: 不支持此类型的图像");
     }
-    _mask = cv::Mat(_origin_minus_1.size(), CV_8UC1, cv::Scalar::all(0));
+    _mask = cv::Mat(_origin_1.size(), CV_8UC1, cv::Scalar::all(0));
     _open = true;
     return true;
 }
@@ -58,11 +58,11 @@ QImage CVFunctions::canny(int blur, int threshold1, int threshold2, bool show)
 QImage CVFunctions::withCanny(int blur, int threshold1, int threshold2, bool show)
 {
     auto _canny = canny_(blur, threshold1, threshold2);
-    cv::Mat mat = _origin_minus_1.clone();
+    cv::Mat mat = _origin_1.clone();
     if(mat.type() == CV_8UC4)
     {
-        for(int i=0;i<_origin_minus_1.rows;++i){
-            for(int j=0;j<_origin_minus_1.cols;++j){
+        for(int i=0;i<_origin_1.rows;++i){
+            for(int j=0;j<_origin_1.cols;++j){
                 if(_canny.at<uchar>(i, j)==255){
                     mat.at<cv::Vec4b>(i, j) = cv::Vec4b(0, 0, 255, 255);
                 }
@@ -70,8 +70,8 @@ QImage CVFunctions::withCanny(int blur, int threshold1, int threshold2, bool sho
         }
     }else if(mat.type() == CV_8UC3)
     {
-        for(int i=0;i<_origin_minus_1.rows;++i){
-            for(int j=0;j<_origin_minus_1.cols;++j){
+        for(int i=0;i<_origin_1.rows;++i){
+            for(int j=0;j<_origin_1.cols;++j){
                 if(_canny.at<uchar>(i, j)==255){
                     mat.at<cv::Vec3b>(i, j) = cv::Vec3b(0, 0, 255);
                 }
@@ -79,8 +79,8 @@ QImage CVFunctions::withCanny(int blur, int threshold1, int threshold2, bool sho
         }
     }else if(mat.type() == CV_8UC1)
     {
-        for(int i=0;i<_origin_minus_1.rows;++i){
-            for(int j=0;j<_origin_minus_1.cols;++j){
+        for(int i=0;i<_origin_1.rows;++i){
+            for(int j=0;j<_origin_1.cols;++j){
                 if(_canny.at<uchar>(i, j)==255){
                     mat.at<uchar>(i, j) = 255;
                 }
@@ -111,8 +111,8 @@ QImage CVFunctions::mask(const QImage &image, bool show)
     _mask.setTo(cv::Scalar::all(0));
     if(im.type() == CV_8UC4)
     {
-        for(int i=0;i<_origin_minus_1.rows;++i){
-            for(int j=0;j<_origin_minus_1.cols;++j){
+        for(int i=0;i<_origin_1.rows;++i){
+            for(int j=0;j<_origin_1.cols;++j){
                 auto val = im.at<cv::Vec4b>(i, j);
                 if((_canny.at<uchar>(i, j)==255 && val==cv::Vec4b(255, 255, 255, 255)) || val == cv::Vec4b(0, 255, 255, 255))
                 {
@@ -122,8 +122,8 @@ QImage CVFunctions::mask(const QImage &image, bool show)
         }
     }else if(im.type() == CV_8UC3)
     {
-        for(int i=0;i<_origin_minus_1.rows;++i){
-            for(int j=0;j<_origin_minus_1.cols;++j){
+        for(int i=0;i<_origin_1.rows;++i){
+            for(int j=0;j<_origin_1.cols;++j){
                 auto val = im.at<cv::Vec3b>(i, j);
                 if((_canny.at<uchar>(i, j)==255 && val==cv::Vec3b(255, 255, 255)) || val == cv::Vec3b(0, 255, 255))
                 {
@@ -153,8 +153,8 @@ QImage CVFunctions::origin(const QImage &image, bool show)
     auto im = _origin.clone();
     if(mask_im.type() == CV_8UC4)
     {
-        for(int i=0;i<_origin_minus_1.rows;++i){
-            for(int j=0;j<_origin_minus_1.cols;++j){
+        for(int i=0;i<_origin_1.rows;++i){
+            for(int j=0;j<_origin_1.cols;++j){
                 auto val = mask_im.at<cv::Vec4b>(i, j);
                 if(val==cv::Vec4b(0, 255, 0, 255))
                 {
@@ -164,8 +164,8 @@ QImage CVFunctions::origin(const QImage &image, bool show)
         }
     }else if(mask_im.type() == CV_8UC3)
     {
-        for(int i=0;i<_origin_minus_1.rows;++i){
-            for(int j=0;j<_origin_minus_1.cols;++j){
+        for(int i=0;i<_origin_1.rows;++i){
+            for(int j=0;j<_origin_1.cols;++j){
                 auto val = mask_im.at<cv::Vec3b>(i, j);
                 if(val == cv::Vec3b(0, 255, 0))
                 {
