@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1366</width>
-    <height>768</height>
+    <width>1600</width>
+    <height>900</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <widget class="QLabel" name="la_origin">
     <property name="geometry">
      <rect>
-      <x>990</x>
+      <x>1190</x>
       <y>60</y>
       <width>350</width>
       <height>180</height>
@@ -33,7 +33,7 @@
    <widget class="QLabel" name="la_canny">
     <property name="geometry">
      <rect>
-      <x>990</x>
+      <x>1190</x>
       <y>270</y>
       <width>350</width>
       <height>180</height>
@@ -49,7 +49,7 @@
    <widget class="QLabel" name="la_mask">
     <property name="geometry">
      <rect>
-      <x>990</x>
+      <x>1190</x>
       <y>470</y>
       <width>350</width>
       <height>180</height>
@@ -67,8 +67,8 @@
      <rect>
       <x>50</x>
       <y>60</y>
-      <width>921</width>
-      <height>601</height>
+      <width>1111</width>
+      <height>711</height>
      </rect>
     </property>
     <property name="widgetResizable">
@@ -79,8 +79,8 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>919</width>
-       <height>599</height>
+       <width>1109</width>
+       <height>709</height>
       </rect>
      </property>
     </widget>
@@ -88,7 +88,7 @@
    <widget class="QLabel" name="la_threshold1">
     <property name="geometry">
      <rect>
-      <x>1070</x>
+      <x>1290</x>
       <y>10</y>
       <width>91</width>
       <height>41</height>
@@ -101,7 +101,7 @@
    <widget class="QLabel" name="la_threshold2">
     <property name="geometry">
      <rect>
-      <x>1220</x>
+      <x>1440</x>
       <y>20</y>
       <width>91</width>
       <height>21</height>
@@ -114,7 +114,7 @@
    <widget class="QSpinBox" name="sb_threshold1">
     <property name="geometry">
      <rect>
-      <x>1160</x>
+      <x>1380</x>
       <y>20</y>
       <width>48</width>
       <height>26</height>
@@ -136,7 +136,7 @@
    <widget class="QSpinBox" name="sb_threshold2">
     <property name="geometry">
      <rect>
-      <x>1310</x>
+      <x>1530</x>
       <y>20</y>
       <width>48</width>
       <height>26</height>
@@ -206,7 +206,7 @@
    <widget class="QLabel" name="la_blur">
     <property name="geometry">
      <rect>
-      <x>970</x>
+      <x>1190</x>
       <y>10</y>
       <width>41</width>
       <height>41</height>
@@ -219,7 +219,7 @@
    <widget class="QComboBox" name="cb_blur">
     <property name="geometry">
      <rect>
-      <x>1010</x>
+      <x>1230</x>
       <y>20</y>
       <width>41</width>
       <height>25</height>
@@ -265,8 +265,8 @@
    <widget class="QCheckBox" name="cb_origin">
     <property name="geometry">
      <rect>
-      <x>1100</x>
-      <y>680</y>
+      <x>1300</x>
+      <y>790</y>
       <width>71</width>
       <height>23</height>
      </rect>
@@ -281,8 +281,8 @@
    <widget class="QCheckBox" name="cb_canny">
     <property name="geometry">
      <rect>
-      <x>1180</x>
-      <y>680</y>
+      <x>1380</x>
+      <y>790</y>
       <width>92</width>
       <height>23</height>
      </rect>
@@ -297,8 +297,8 @@
    <widget class="QCheckBox" name="cb_mask">
     <property name="geometry">
      <rect>
-      <x>1280</x>
-      <y>680</y>
+      <x>1480</x>
+      <y>790</y>
       <width>92</width>
       <height>23</height>
      </rect>
@@ -313,8 +313,8 @@
    <widget class="QCheckBox" name="cb_origin_canny">
     <property name="geometry">
      <rect>
-      <x>980</x>
-      <y>680</y>
+      <x>1180</x>
+      <y>790</y>
       <width>101</width>
       <height>23</height>
      </rect>
@@ -457,7 +457,7 @@
     <property name="geometry">
      <rect>
       <x>880</x>
-      <y>670</y>
+      <y>790</y>
       <width>89</width>
       <height>25</height>
      </rect>
@@ -476,7 +476,7 @@
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>670</y>
+      <y>790</y>
       <width>711</width>
       <height>25</height>
      </rect>
@@ -495,7 +495,7 @@
     <property name="geometry">
      <rect>
       <x>770</x>
-      <y>670</y>
+      <y>790</y>
       <width>31</width>
       <height>25</height>
      </rect>
@@ -513,7 +513,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1366</width>
+     <width>1600</width>
      <height>22</height>
     </rect>
    </property>
