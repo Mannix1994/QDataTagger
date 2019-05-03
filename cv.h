@@ -19,6 +19,7 @@ public:
     QImage mask(bool show=false);
     QImage mask(const QImage &image, bool show=false);
     QImage origin(bool show=false);
+    QImage origin(const QImage &image, bool show=false);
     void showMat(std::string title, cv::Mat &mat);
     void closeWindow(WINDOW window);
 private:

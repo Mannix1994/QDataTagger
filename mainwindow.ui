@@ -396,7 +396,7 @@
      <string>笔宽:</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="pb_cancel">
     <property name="geometry">
      <rect>
       <x>370</x>
@@ -452,6 +452,54 @@
       <string extracomment="消除不想标的阴影边">消除</string>
      </property>
     </item>
+   </widget>
+   <widget class="QPushButton" name="pb_save">
+    <property name="geometry">
+     <rect>
+      <x>880</x>
+      <y>670</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>保存标记好的Mask和去除不想要区域的原图</string>
+    </property>
+    <property name="text">
+     <string>保存</string>
+    </property>
+    <property name="shortcut">
+     <string>Ctrl+S</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="le_save">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>670</y>
+      <width>711</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>保存路径</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pb_choose">
+    <property name="geometry">
+     <rect>
+      <x>770</x>
+      <y>670</y>
+      <width>31</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>选择保存位置</string>
+    </property>
+    <property name="text">
+     <string>...</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">

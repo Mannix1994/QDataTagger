@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QScrollBar>
+#include <QFileInfo>
+#include <QDir>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -12,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->scrollArea->setWidget(_area);
-    connect(_area, &PaintWidget::imageChanged, this, &MainWindow::on_mask_changed);
+    connect(_area, &PaintWidget::imageChanged, this, &MainWindow::on_image_changed);
 }
 
 MainWindow::~MainWindow()
@@ -147,7 +149,7 @@ void MainWindow::on_sb_pensize_valueChanged(int arg1)
     _area->setPenSize(arg1);
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_pb_cancel_clicked()
 {
     _area->cancel();
 }
@@ -166,7 +168,7 @@ void MainWindow::on_cb_mode_currentIndexChanged(const QString &arg1)
     }
 }
 
-void MainWindow::on_mask_changed()
+void MainWindow::on_image_changed()
 {
     auto im = _area->grab().toImage();
     auto mask = _cvf.mask(im, ui->cb_mask->isChecked());
@@ -226,4 +228,45 @@ void MainWindow::on_cb_mask_clicked(bool checked)
     }
     else
         _cvf.closeWindow(CVFunctions::MASK);
+}
+
+void MainWindow::on_pb_choose_clicked()
+{
+    QString home_path = QStandardPaths::standardLocations(QStandardPaths::HomeLocation)[0];
+    QString save_dir = QFileDialog::getExistingDirectory(this, QString(), home_path);
+    if (save_dir == "")
+        return;
+    else{
+        ui->le_save->setText(save_dir);
+    }
+}
+
+void MainWindow::on_pb_save_clicked()
+{
+    if(_cvf.isOpened()){
+        auto mask_im = _area->grab().toImage();
+        auto mask = _cvf.mask(mask_im, false);
+        auto image = _cvf.origin(mask_im, false);
+        auto im_info = QFileInfo(ui->statusBar->currentMessage());
+        auto im_name = im_info.fileName();
+        auto save_path = ui->le_save->text();
+        auto dir = QDir(save_path);
+        if(!dir.exists()){
+            auto button = QMessageBox::information(this, "提示", "保存目录不存在，是否创建?", QMessageBox::Ok, QMessageBox::Cancel);
+            if(button == QMessageBox::Ok){
+                dir.mkpath(save_path);
+            }
+        }
+        QDir origin_dir = save_path+("/origin");
+        QDir mask_dir = save_path+"/mask";
+        if(!origin_dir.exists()){
+            origin_dir.mkpath(origin_dir.absolutePath());
+        }
+        if(!mask_dir.exists()){
+            mask_dir.mkpath(mask_dir.absolutePath());
+        }
+        qDebug()<<origin_dir.absolutePath() +"/" +im_name;
+        image.save(origin_dir.absolutePath() + "/"+im_name);
+        mask.save(mask_dir.absolutePath() + "/"+im_name);
+    }
 }

@@ -138,10 +138,7 @@ QImage CVFunctions::mask(const QImage &image, bool show)
     else{
         QMessageBox::critical(nullptr, "错误", "错误72: 不支持此类型的图像");
     }
-    if(show){
-        showMat("Mask", _mask);
-    }
-    return toQImage(_mask);
+    return mask(show);
 }
 
 QImage CVFunctions::origin(bool show)
@@ -150,6 +147,43 @@ QImage CVFunctions::origin(bool show)
         showMat("原图", _origin);
     }
     return toQImage(_origin);
+}
+
+QImage CVFunctions::origin(const QImage &image, bool show)
+{
+    auto mask_im = toMat(image);
+    cv::resize(mask_im, mask_im, _origin.size());
+    auto im = _origin.clone();
+    if(mask_im.type() == CV_8UC4)
+    {
+        for(int i=0;i<_origin_minus_1.rows;++i){
+            for(int j=0;j<_origin_minus_1.cols;++j){
+                auto val = mask_im.at<cv::Vec4b>(i, j);
+                if(val==cv::Vec4b(0, 255, 0, 255))
+                {
+                    im.at<cv::Vec4b>(i, j) = cv::Vec4b(0, 255, 0, 255);
+                }
+            }
+        }
+    }else if(mask_im.type() == CV_8UC3)
+    {
+        for(int i=0;i<_origin_minus_1.rows;++i){
+            for(int j=0;j<_origin_minus_1.cols;++j){
+                auto val = mask_im.at<cv::Vec3b>(i, j);
+                if(val == cv::Vec3b(0, 255, 0))
+                {
+                    im.at<cv::Vec3b>(i, j) = cv::Vec3b(0, 255, 0);
+                }
+            }
+        }
+    }
+    else{
+        QMessageBox::critical(nullptr, "错误", "错误181: 不支持此类型的图像");
+    }
+    if(show){
+        showMat("原图", im);
+    }
+    return toQImage(im);
 }
 
 void CVFunctions::showMat(std::string title, cv::Mat &mat)

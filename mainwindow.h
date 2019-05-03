@@ -43,11 +43,9 @@ private slots:
 
     void on_sb_pensize_valueChanged(int arg1);
 
-    void on_pushButton_clicked();
-
     void on_cb_mode_currentIndexChanged(const QString &arg1);
 
-    void on_mask_changed();
+    void on_image_changed();
 
     void on_cb_origin_canny_clicked(bool checked);
 
@@ -56,6 +54,12 @@ private slots:
     void on_cb_canny_clicked(bool checked);
 
     void on_cb_mask_clicked(bool checked);
+
+    void on_pb_choose_clicked();
+
+    void on_pb_cancel_clicked();
+
+    void on_pb_save_clicked();
 
 private:
     Ui::MainWindow *ui;
