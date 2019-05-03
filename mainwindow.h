@@ -22,6 +22,7 @@ private:
     void setImage(QString im_path="");
     void msg(const QString &content);
     void msg(const QString  &title, const QString &content);
+    void updateImages();
 
 protected:
     void keyPressEvent(QKeyEvent *e);

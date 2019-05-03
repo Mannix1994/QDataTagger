@@ -158,7 +158,7 @@ QImage CVFunctions::origin(const QImage &image, bool show)
                 auto val = mask_im.at<cv::Vec4b>(i, j);
                 if(val==cv::Vec4b(0, 255, 0, 255))
                 {
-                    im.at<cv::Vec4b>(i, j) = cv::Vec4b(0, 255, 0, 255);
+                    im.at<cv::Vec4b>(i, j) = cv::Vec4b(0, 0, 0, 255);
                 }
             }
         }
@@ -169,7 +169,7 @@ QImage CVFunctions::origin(const QImage &image, bool show)
                 auto val = mask_im.at<cv::Vec3b>(i, j);
                 if(val == cv::Vec3b(0, 255, 0))
                 {
-                    im.at<cv::Vec3b>(i, j) = cv::Vec3b(0, 255, 0);
+                    im.at<cv::Vec3b>(i, j) = cv::Vec3b(0, 0, 0);
                 }
             }
         }

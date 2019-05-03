@@ -43,15 +43,8 @@ void MainWindow::setImage(QString im_path)
     ui->statusBar->showMessage(im_path);
     auto withCanny = _cvf.withCanny(ui->cb_blur->currentText().toInt(), ui->sb_threshold1->value(), ui->sb_threshold2->value(),
                                     ui->cb_origin_canny->isChecked());
-    auto canny = _cvf.canny(ui->cb_blur->currentText().toInt(), ui->sb_threshold1->value(), ui->sb_threshold2->value(),
-                            ui->cb_canny->isChecked());
-    auto origin = _cvf.origin(ui->cb_origin->isChecked());
-    auto mask = _cvf.mask(ui->cb_mask->isChecked());
     _area->setImage(withCanny);
-    ui->la_canny->setPixmap(QPixmap::fromImage(canny.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
-    ui->la_origin->setPixmap(QPixmap::fromImage(origin.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
-    ui->la_mask->setPixmap(QPixmap::fromImage(mask.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
-
+    updateImages();
 }
 
 void MainWindow::msg(const QString &content)
@@ -62,6 +55,23 @@ void MainWindow::msg(const QString &content)
 void MainWindow::msg(const QString &title, const QString &content)
 {
     QMessageBox::information(this, title, content, QMessageBox::Ok);
+}
+
+void MainWindow::updateImages()
+{
+    if(!_cvf.isOpened())
+    {
+        return;
+    }
+    auto withCanny = _cvf.withCanny(ui->cb_blur->currentText().toInt(), ui->sb_threshold1->value(), ui->sb_threshold2->value(),
+                                    ui->cb_origin_canny->isChecked());
+    auto canny = _cvf.canny(ui->cb_blur->currentText().toInt(), ui->sb_threshold1->value(), ui->sb_threshold2->value(),
+                            ui->cb_canny->isChecked());
+    auto origin = _cvf.origin(ui->cb_origin->isChecked());
+    auto mask = _cvf.mask(ui->cb_mask->isChecked());
+    ui->la_canny->setPixmap(QPixmap::fromImage(canny.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
+    ui->la_origin->setPixmap(QPixmap::fromImage(origin.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
+    ui->la_mask->setPixmap(QPixmap::fromImage(mask.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e)
@@ -137,8 +147,6 @@ void MainWindow::on_cb_blur_currentIndexChanged(int index)
     setImage();
 }
 
-
-
 void MainWindow::on_sb_scale_valueChanged(int arg1)
 {
     _area->setScale(arg1);
@@ -152,6 +160,7 @@ void MainWindow::on_sb_pensize_valueChanged(int arg1)
 void MainWindow::on_pb_cancel_clicked()
 {
     _area->cancel();
+    on_image_changed();
 }
 
 void MainWindow::on_cb_mode_currentIndexChanged(const QString &arg1)
@@ -170,7 +179,7 @@ void MainWindow::on_cb_mode_currentIndexChanged(const QString &arg1)
 
 void MainWindow::on_image_changed()
 {
-    auto im = _area->grab().toImage();
+    auto im = _area->drawedImage();
     auto mask = _cvf.mask(im, ui->cb_mask->isChecked());
     ui->la_mask->setPixmap(QPixmap::fromImage(mask.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
 }
@@ -179,11 +188,7 @@ void MainWindow::on_cb_origin_canny_clicked(bool checked)
 {
     if (checked)
     {
-       if(_cvf.isOpened())
-       {
-           auto withCanny = _cvf.withCanny(ui->cb_blur->currentText().toInt(), ui->sb_threshold1->value(),
-                                           ui->sb_threshold2->value(), true);
-       }
+       updateImages();
     }
     else
         _cvf.closeWindow(CVFunctions::WITH_CANNY);
@@ -193,11 +198,7 @@ void MainWindow::on_cb_origin_clicked(bool checked)
 {
     if (checked)
     {
-        if(_cvf.isOpened())
-        {
-            auto origin = _cvf.origin(true);
-            ui->la_origin->setPixmap(QPixmap::fromImage(origin.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
-        }
+        updateImages();
     }
     else
         _cvf.closeWindow(CVFunctions::ORIGIN);
@@ -206,11 +207,7 @@ void MainWindow::on_cb_origin_clicked(bool checked)
 void MainWindow::on_cb_canny_clicked(bool checked)
 {
     if (checked){
-        if(_cvf.isOpened())
-        {
-            auto canny = _cvf.canny(ui->cb_blur->currentText().toInt(), ui->sb_threshold1->value(), ui->sb_threshold2->value(), true);
-            ui->la_canny->setPixmap(QPixmap::fromImage(canny.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
-        }
+        updateImages();
     }
     else
         _cvf.closeWindow(CVFunctions::CANNY);
@@ -220,11 +217,7 @@ void MainWindow::on_cb_mask_clicked(bool checked)
 {
     if (checked)
     {
-        if(_cvf.isOpened())
-        {
-            auto mask = _cvf.mask(true);
-            ui->la_mask->setPixmap(QPixmap::fromImage(mask.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
-        }
+        updateImages();
     }
     else
         _cvf.closeWindow(CVFunctions::MASK);

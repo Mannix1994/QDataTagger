@@ -19,6 +19,7 @@ public:
     void setPenSize(int size);
     void setPenColor(const QRgb &penColor);
     void cancel();
+    QImage drawedImage();
 public  slots:
 
 protected:
@@ -26,7 +27,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);//------------------鼠标按下事件
     void mouseMoveEvent(QMouseEvent *event);//-------------------鼠标移动事件(重点理解)
     void mouseReleaseEvent(QMouseEvent *event);//----------------鼠标释放事件
-    void paint(QImage &theImage);//-------------------------画图工具
+    void paint();//-------------------------画图工具
 signals:
     void imageChanged();
 

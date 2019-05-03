@@ -484,6 +484,12 @@
     <property name="toolTip">
      <string>保存路径</string>
     </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="placeholderText">
+     <string>保存路径...</string>
+    </property>
    </widget>
    <widget class="QPushButton" name="pb_choose">
     <property name="geometry">
