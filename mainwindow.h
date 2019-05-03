@@ -53,6 +53,8 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_cb_mode_currentIndexChanged(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
     PaintWidget *_area;//-----------------------------------创建一个画板组件

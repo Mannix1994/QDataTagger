@@ -336,7 +336,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>放大：</string>
+     <string>放大:</string>
     </property>
    </widget>
    <widget class="QSpinBox" name="sb_scale">
@@ -393,7 +393,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>笔宽：</string>
+     <string>笔宽:</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton">
@@ -414,6 +414,39 @@
     <property name="shortcut">
      <string>Ctrl+Z</string>
     </property>
+   </widget>
+   <widget class="QLabel" name="la_mode">
+    <property name="geometry">
+     <rect>
+      <x>720</x>
+      <y>10</y>
+      <width>51</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>模式:</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="cb_mode">
+    <property name="geometry">
+     <rect>
+      <x>770</x>
+      <y>10</y>
+      <width>86</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>标记</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>消除</string>
+     </property>
+    </item>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">

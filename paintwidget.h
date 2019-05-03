@@ -7,6 +7,7 @@
 #include <QEvent>
 #include <QVector>
 #include <QList>
+#include <QRgb>
 
 class PaintWidget : public QWidget
 {
@@ -16,6 +17,7 @@ public:
     void setImage(QImage image);
     void setScale(int scale);
     void setPenSize(int size);
+    void setPenColor(const QRgb &penColor);
     void cancel();
 public  slots:
 
@@ -38,6 +40,7 @@ private:
     int _penSize;//笔的大小
     int _scale;
     int _maxHistorySize;
+    QRgb _penColor;
     QImage _origin;
     QSize _size;
     QList<QImage> _history;

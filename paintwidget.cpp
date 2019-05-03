@@ -12,6 +12,7 @@ PaintWidget::PaintWidget(QWidget *parent) :
     _image = QImage(1,1,QImage::Format_RGB32);
     backColor = qRgb(255,255,255);
     _image.fill(backColor);
+    _penColor = qRgb(255,255,255);
 }
 
 void PaintWidget::setImage(QImage image)
@@ -40,6 +41,11 @@ void PaintWidget::setPenSize(int size)
         return;
     }
     this->_penSize = size;
+}
+
+void PaintWidget::setPenColor(const QRgb &penColor)
+{
+    _penColor = penColor;
 }
 
 void PaintWidget::cancel()
@@ -89,6 +95,7 @@ void PaintWidget::mouseReleaseEvent(QMouseEvent *event){
 void PaintWidget::paint(QImage &theImage){
     QPainter p(&theImage);
     QPen apen;
+    apen.setColor(_penColor);
     apen.setWidth(this->_penSize*this->_scale);
     p.setPen(apen);
     p.drawLine(lastPoint,endPoint);

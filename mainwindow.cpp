@@ -179,3 +179,12 @@ void MainWindow::on_pushButton_clicked()
 {
     _area->cancel();
 }
+
+void MainWindow::on_cb_mode_currentIndexChanged(const QString &arg1)
+{
+    if(arg1 == "标记"){
+        _area->setPenColor(qRgb(255, 255, 255));
+    }else if(arg1 == "消除"){
+        _area->setPenColor(qRgb(0, 255, 0));
+    }
+}
