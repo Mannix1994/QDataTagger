@@ -37,6 +37,7 @@ void MainWindow::setImage(QString im_path)
         msg("图像: \"" + im_path + "\" 无法打开");
         return;
     }
+    ui->statusBar->showMessage(im_path);
     auto withCanny = _cvf.withCanny(ui->cb_blur->currentText().toInt(), ui->sb_threshold1->value(), ui->sb_threshold2->value(),
                                     ui->cb_origin_canny->isChecked());
     auto canny = _cvf.canny(ui->cb_blur->currentText().toInt(), ui->sb_threshold1->value(), ui->sb_threshold2->value(),
@@ -84,7 +85,7 @@ void MainWindow::on_pb_open_clicked()
 {
     QString home_path = QStandardPaths::standardLocations(QStandardPaths::HomeLocation)[0];
     QString list_file = QFileDialog::getOpenFileName(this, QString(),home_path,"TXT (*.txt)");
-    qDebug() << list_file;
+    ui->statusBar->showMessage(list_file);
     if (list_file == "")
         return;
     if (_imageList.open(list_file))
@@ -97,7 +98,6 @@ void MainWindow::on_pb_open_clicked()
 void MainWindow::on_pb_pre_clicked()
 {
     auto im_path = _imageList.pre();
-    qDebug() << im_path;
     if(!im_path.length()){
         msg("没有上一张了啦");
         return;
@@ -108,7 +108,6 @@ void MainWindow::on_pb_pre_clicked()
 void MainWindow::on_pb_next_clicked()
 {
     auto im_path = _imageList.next();
-    qDebug() << im_path;
     if(!im_path.length()){
         msg("没有下一张了啦");
         return;

@@ -19,6 +19,7 @@ void PaintWidget::setImage(QImage image)
 
     _size = image.size();
     _image = image.scaled(_size*_scale);
+    _history.clear();
     _history.push_back(_image.copy());
     update();
 }
@@ -45,9 +46,8 @@ void PaintWidget::cancel()
 {
     if(_history.size()>1)
     {
-        auto size = _history.last().size();
         _history.removeLast();
-        _image = _history.last().scaled(size);
+        _image = _history.last().scaled(_size*_scale);
         update();
     }
 }
@@ -78,7 +78,7 @@ void PaintWidget::mouseReleaseEvent(QMouseEvent *event){
     paint(_image);
     if(_isDrawing == true)
     {
-        _history.push_back(_image.copy());
+        _history.push_back(_image.scaled(_size));
         if(_history.size()>_maxHistorySize){
             _history.removeFirst();
         }

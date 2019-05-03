@@ -21,8 +21,9 @@ public:
     void showMat(std::string title, cv::Mat &mat);
     void closeWindow(WINDOW window);
 private:
-    cv::Mat _canny;
+    cv::Mat canny_(int blur, int threshold1, int threshold2);
     cv::Mat _origin;
+    cv::Mat _origin_minus_1;
     cv::Mat _mask;
     cv::Mat _gray;
     bool _open;
