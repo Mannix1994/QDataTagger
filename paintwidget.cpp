@@ -88,6 +88,7 @@ void PaintWidget::mouseReleaseEvent(QMouseEvent *event){
         if(_history.size()>_maxHistorySize){
             _history.removeFirst();
         }
+        emit imageChanged();
     }
     _isDrawing = false;
 }

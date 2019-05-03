@@ -17,6 +17,7 @@ public:
     QImage canny(int blur, int threshold1, int threshold2, bool show=false);
     QImage withCanny(int blur, int threshold1, int threshold2, bool show=false);
     QImage mask(bool show=false);
+    QImage mask(const QImage &image, bool show=false);
     QImage origin(bool show=false);
     void showMat(std::string title, cv::Mat &mat);
     void closeWindow(WINDOW window);
@@ -26,6 +27,7 @@ private:
     cv::Mat _origin_minus_1;
     cv::Mat _mask;
     cv::Mat _gray;
+    cv::Mat _canny;
     bool _open;
 signals:
 

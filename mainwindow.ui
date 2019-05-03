@@ -439,12 +439,17 @@
     </property>
     <item>
      <property name="text">
-      <string>标记</string>
+      <string extracomment="覆盖检测出的Canny边">涂抹</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>消除</string>
+      <string extracomment="手动补上没检测出来的Canny边">标记</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string extracomment="消除不想标的阴影边">消除</string>
      </property>
     </item>
    </widget>

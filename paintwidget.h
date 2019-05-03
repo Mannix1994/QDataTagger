@@ -21,7 +21,6 @@ public:
     void cancel();
 public  slots:
 
-
 protected:
     void paintEvent(QPaintEvent *event);//-----------------------重绘事件(重点:由update()函数触发)
     void mousePressEvent(QMouseEvent *event);//------------------鼠标按下事件
@@ -29,9 +28,10 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event);//----------------鼠标释放事件
     void paint(QImage &theImage);//-------------------------画图工具
 signals:
+    void imageChanged();
 
 private:
-
+    void computeMask();
     QImage _image;//-----------------------------------------一块画布
     QRgb backColor;//---------------------------------------画布背景色
     QPoint lastPoint;//-------------------------------------前一个点，因为线是由无数点组成的

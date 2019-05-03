@@ -1,25 +1,21 @@
 #include "convert.h"
 #include <QMessageBox>
 
-QImage toQImage(cv::Mat &mat, bool swap) {
+QImage toQImage(const cv::Mat &mat, bool swap) {
   switch (mat.type())
   {
      // 8-bit, 4 channel
      case CV_8UC4:
      {
-        if(swap)
-            cv::cvtColor(mat, mat, cv::COLOR_BGRA2RGBA);
         QImage image(mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB32);
-        return image.rgbSwapped().copy();
+        return image.copy();
      }
 
      // 8-bit, 3 channel
      case CV_8UC3:
      {
-        if(swap)
-            cv::cvtColor(mat, mat, cv::COLOR_BGR2RGB);
         QImage image( mat.data, mat.cols, mat.rows, mat.step, QImage::Format_RGB888 );
-        return image.rgbSwapped().copy();
+        return image.copy();
      }
 
      // 8-bit, 1 channel
@@ -44,22 +40,18 @@ QImage toQImage(cv::Mat &mat, bool swap) {
   return QImage();
 }
 
-cv::Mat toMat(QImage &image, bool swap) {
+cv::Mat toMat(const QImage &image, bool swap) {
   switch (image.format())
   {
      // 8-bit, 4 channel
      case QImage::Format_RGB32:
      {
-//        if (swap)
-//           image = image.rgbSwapped();
         cv::Mat mat(image.height(), image.width(), CV_8UC4, const_cast<uchar*>(image.bits()), image.bytesPerLine());
         return mat.clone();
      }
      // 8-bit, 3 channel
      case QImage::Format_RGB888:
      {
-      if (swap)
-          image = image.rgbSwapped();
         return cv::Mat(image.height(), image.width(), CV_8UC3, const_cast<uchar*>(image.bits()), image.bytesPerLine() ).clone();
      }
 

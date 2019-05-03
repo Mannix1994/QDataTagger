@@ -107,12 +107,49 @@ QImage CVFunctions::mask(bool show)
     return toQImage(_mask);
 }
 
+QImage CVFunctions::mask(const QImage &image, bool show)
+{
+    auto im = toMat(image);
+    cv::resize(im, im, _origin.size());
+    _mask.setTo(cv::Scalar::all(0));
+    if(im.type() == CV_8UC4)
+    {
+        for(int i=0;i<_origin_minus_1.rows;++i){
+            for(int j=0;j<_origin_minus_1.cols;++j){
+                auto val = im.at<cv::Vec4b>(i, j);
+                if((_canny.at<uchar>(i, j)==255 && val==cv::Vec4b(255, 255, 255, 255)) || val == cv::Vec4b(0, 255, 255, 255))
+                {
+                    _mask.at<uchar>(i, j) = 255;
+                }
+            }
+        }
+    }else if(im.type() == CV_8UC3)
+    {
+        for(int i=0;i<_origin_minus_1.rows;++i){
+            for(int j=0;j<_origin_minus_1.cols;++j){
+                auto val = im.at<cv::Vec3b>(i, j);
+                if((_canny.at<uchar>(i, j)==255 && val==cv::Vec3b(255, 255, 255)) || val == cv::Vec3b(0, 255, 255))
+                {
+                    _mask.at<uchar>(i, j) = 255;
+                }
+            }
+        }
+    }
+    else{
+        QMessageBox::critical(nullptr, "错误", "错误72: 不支持此类型的图像");
+    }
+    if(show){
+        showMat("Mask", _mask);
+    }
+    return toQImage(_mask);
+}
+
 QImage CVFunctions::origin(bool show)
 {
     if(show){
-        showMat("原图", _origin_minus_1);
+        showMat("原图", _origin);
     }
-    return toQImage(_origin_minus_1);
+    return toQImage(_origin);
 }
 
 void CVFunctions::showMat(std::string title, cv::Mat &mat)
@@ -148,7 +185,6 @@ void CVFunctions::closeWindow(CVFunctions::WINDOW window)
 
 cv::Mat CVFunctions::canny_(int blur, int threshold1, int threshold2)
 {
-    cv::Mat _canny;
     cv::blur(_gray, _canny, cv::Size(blur, blur));
     cv::Canny(_canny, _canny, threshold1, threshold2);
     return _canny;
