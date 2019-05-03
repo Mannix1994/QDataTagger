@@ -116,6 +116,8 @@ QImage CVFunctions::mask(const QImage &image, bool show)
         for(int i=0;i<_origin_1.rows;++i){
             for(int j=0;j<_origin_1.cols;++j){
                 auto val = im.at<cv::Vec4b>(i, j);
+                if(val == cv::Vec4b(0, 255, 0, 255))
+                    continue;
                 if((_canny.at<uchar>(i, j)==255 && val==cv::Vec4b(255, 255, 255, 255)) || val == cv::Vec4b(0, 255, 255, 255))
                 {
                     _mask.at<uchar>(i, j) = 255;
@@ -127,6 +129,8 @@ QImage CVFunctions::mask(const QImage &image, bool show)
         for(int i=0;i<_origin_1.rows;++i){
             for(int j=0;j<_origin_1.cols;++j){
                 auto val = im.at<cv::Vec3b>(i, j);
+                if(val == cv::Vec3b(0, 255, 0))
+                    continue;
                 if((_canny.at<uchar>(i, j)==255 && val==cv::Vec3b(255, 255, 255)) || val == cv::Vec3b(0, 255, 255))
                 {
                     _mask.at<uchar>(i, j) = 255;
