@@ -494,7 +494,7 @@
      <string>保存路径</string>
     </property>
     <property name="text">
-     <string>/home/creator/Projects/Dataset/edge_p/00004</string>
+     <string/>
     </property>
     <property name="placeholderText">
      <string>保存路径...</string>
