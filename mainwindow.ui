@@ -181,10 +181,13 @@
      </rect>
     </property>
     <property name="toolTip">
-     <string>也可以按A</string>
+     <string>A, 打开下一张</string>
     </property>
     <property name="text">
      <string>上一张</string>
+    </property>
+    <property name="shortcut">
+     <string>A</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pb_next">
@@ -197,10 +200,13 @@
      </rect>
     </property>
     <property name="toolTip">
-     <string>也可以按D</string>
+     <string>D, 打开下一张</string>
     </property>
     <property name="text">
      <string>下一张</string>
+    </property>
+    <property name="shortcut">
+     <string>D</string>
     </property>
    </widget>
    <widget class="QLabel" name="la_blur">
@@ -406,13 +412,13 @@
      </rect>
     </property>
     <property name="toolTip">
-     <string>撤销上一次涂抹</string>
+     <string>F, 撤销上一次操作</string>
     </property>
     <property name="text">
      <string>撤销</string>
     </property>
     <property name="shortcut">
-     <string>Ctrl+Z</string>
+     <string>F</string>
     </property>
    </widget>
    <widget class="QLabel" name="la_mode">
@@ -472,7 +478,7 @@
      <string>保存</string>
     </property>
     <property name="shortcut">
-     <string>Ctrl+S</string>
+     <string>S</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="le_save">

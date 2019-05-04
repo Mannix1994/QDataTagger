@@ -119,11 +119,17 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
             ui->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         }
         showScrollBar = !showScrollBar;
-    }else if(e->key() == Qt::Key_A){
-        on_pb_pre_clicked();
-    }else if(e->key() == Qt::Key_D){
-        on_pb_next_clicked();
+    }else if(e->key() == Qt::Key_W){// 通过按W键在5和50之间快速切换
+        auto val = ui->sb_pensize->value();
+        if(val == 5){
+            ui->sb_pensize->setValue(50);
+        }else if(val == 50){
+            ui->sb_pensize->setValue(5);
+        }else{
+            ui->sb_pensize->setValue(50);
+        }
     }
+    // 其他按键事件在ui界面去修改
     e->accept();
 }
 
