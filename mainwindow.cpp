@@ -272,7 +272,7 @@ void MainWindow::on_pb_choose_clicked()
 void MainWindow::on_pb_save_clicked()
 {
     if(_cvf.isOpened()){
-        auto mask_im = _area->grab().toImage();
+        auto mask_im = _area->drawedImage();
         auto mask = _cvf.mask(mask_im, false);
         auto image = _cvf.origin(mask_im, false);
         auto im_info = QFileInfo(ui->statusBar->currentMessage());
@@ -295,19 +295,19 @@ void MainWindow::on_pb_save_clicked()
                 }
             }
         }
-        QDir origin_dir = save_path+("origin/");
-        QDir mask_dir = save_path+"mask/";
+        QDir origin_dir = save_path+("origin");
+        QDir mask_dir = save_path+"mask";
         if(!origin_dir.exists()){
             origin_dir.mkpath(origin_dir.absolutePath());
         }
         if(!mask_dir.exists()){
             mask_dir.mkpath(mask_dir.absolutePath());
         }
-        qDebug()<<origin_dir.absolutePath() + im_name;
-        if(!image.save(origin_dir.absolutePath() + im_name)){
+        qDebug()<<origin_dir.absolutePath() +"/" +im_name;
+        if(!image.save(origin_dir.absolutePath() + "/"+im_name)){
             msg("保存原图失败，请检查保存目录是否存在");
         }
-        if(!mask.save(mask_dir.absolutePath() + im_name)){
+        if(!mask.save(mask_dir.absolutePath() + "/"+im_name)){
             msg("保存Mask图失败，请检查保存目录是否存在");
         }
         _image_updated = false;

@@ -377,7 +377,7 @@
      <number>1</number>
     </property>
     <property name="maximum">
-     <number>30</number>
+     <number>50</number>
     </property>
     <property name="value">
      <number>5</number>
@@ -488,7 +488,7 @@
      <string>保存路径</string>
     </property>
     <property name="text">
-     <string/>
+     <string>/home/creator/Projects/Dataset/edge_p/00004</string>
     </property>
     <property name="placeholderText">
      <string>保存路径...</string>
