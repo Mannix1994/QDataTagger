@@ -55,6 +55,7 @@ void PaintWidget::cancel()
         _history.removeLast();
         _image = _history.last();
         update();
+        emit imageChanged();
     }
 }
 
