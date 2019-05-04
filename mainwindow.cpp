@@ -10,7 +10,7 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow), _area(new PaintWidget())
+    ui(new Ui::MainWindow), _area(new PaintWidget()), _image_updated(false)
 {
     ui->setupUi(this);
     ui->scrollArea->setWidget(_area);
@@ -43,6 +43,7 @@ void MainWindow::setImage(QString im_path)
                                     ui->cb_origin_canny->isChecked());
     _area->setImage(withCanny);
     updateImages();
+    _image_updated = false;
 }
 
 void MainWindow::msg(const QString &content)
@@ -70,6 +71,17 @@ void MainWindow::updateImages()
     ui->la_canny->setPixmap(QPixmap::fromImage(canny.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
     ui->la_origin->setPixmap(QPixmap::fromImage(origin.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
     ui->la_mask->setPixmap(QPixmap::fromImage(mask.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
+}
+
+void MainWindow::checkSaved()
+{
+    if(_image_updated){
+        auto button = QMessageBox::question(this, "提示", "当前图像尚未保存，是否保存？", QMessageBox::Ok, QMessageBox::Cancel);
+        if(button == QMessageBox::Ok){
+            // 保存图像
+            on_pb_save_clicked();
+        }
+    }
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e)
@@ -109,6 +121,7 @@ void MainWindow::on_pb_open_clicked()
 
 void MainWindow::on_pb_pre_clicked()
 {
+    checkSaved();
     auto im_path = _imageList.pre();
     if(!im_path.length()){
         msg("没有上一张了啦");
@@ -119,6 +132,7 @@ void MainWindow::on_pb_pre_clicked()
 
 void MainWindow::on_pb_next_clicked()
 {
+    checkSaved();
     auto im_path = _imageList.next();
     if(!im_path.length()){
         msg("没有下一张了啦");
@@ -177,6 +191,7 @@ void MainWindow::on_cb_mode_currentIndexChanged(const QString &arg1)
 
 void MainWindow::on_image_changed()
 {
+    _image_updated = true;
     auto im = _area->drawedImage();
     auto mask = _cvf.mask(im, ui->cb_mask->isChecked());
     ui->la_mask->setPixmap(QPixmap::fromImage(mask.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
@@ -270,6 +285,7 @@ void MainWindow::on_pb_save_clicked()
         if(!mask.save(mask_dir.absolutePath() + "/"+im_name)){
             msg("保存Mask图失败，请检查保存目录是否存在");
         }
+        _image_updated = false;
     }
 }
 

@@ -36,7 +36,14 @@ private:
      * @param content 内容
      */
     void msg(const QString  &title, const QString &content);
+    /**
+     * @brief updateImages _cvf中取出图像，并更新主界面的图像
+     */
     void updateImages();
+    /**
+     * @brief checkSaved 检查当前图像是否已经保存
+     */
+    void checkSaved();
 
 protected:
     /**
@@ -81,7 +88,7 @@ private slots:
     void on_pb_cancel_clicked();
     // 保存当前的Mask和原图
     void on_pb_save_clicked();
-
+    // 当前是使用亮度图求Canny边还是使用灰度值求Canny边
     void on_cb_canny_mode_currentIndexChanged(const QString &arg1);
 
 private:
@@ -92,6 +99,8 @@ private:
     ImageList _imageList;
     // 需要用到的OpenCV算法
     CVFunctions _cvf;
+    // 是否保存的标志
+    bool _image_updated;
 };
 
 #endif // MAINWINDOW_H

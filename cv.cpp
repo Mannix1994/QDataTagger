@@ -67,8 +67,8 @@ bool CVFunctions::open(QImage &image)
     }else{
         QMessageBox::critical(nullptr, "警告", "错误45: 暂时不支持此Canny源");
     }
-    cv::imshow("light", _gray_or_light);
-    cv::waitKey(1);
+    //cv::imshow("light", _gray_or_light);
+    //cv::waitKey(1);
     // 定义一个空的Mask
     _mask = cv::Mat(_origin_1.size(), CV_8UC1, cv::Scalar::all(0));
     _open = true;
