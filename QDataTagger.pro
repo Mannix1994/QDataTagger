@@ -41,8 +41,13 @@ HEADERS += \
 FORMS += \
         mainwindow.ui
 
-INCLUDEPATH += /usr/local/opencv343/include/
+# 安装opencv依赖：sudo apt-get install libopencv-dev
+LIBS+=-lopencv_imgcodecs
+LIBS+=-lopencv_highgui
+LIBS+=-lopencv_core
+LIBS+=-lopencv_imgproc
 
+#INCLUDEPATH += /usr/local/opencv343/include/
 #LIBS+=/usr/local/opencv343/lib/libopencv_features2d.so
 #LIBS+=/usr/local/opencv343/lib/libopencv_ml.so
 #LIBS+=/usr/local/opencv343/lib/libopencv_dpm.so
@@ -66,16 +71,16 @@ INCLUDEPATH += /usr/local/opencv343/include/
 #LIBS+=/usr/local/opencv343/lib/libopencv_rgbd.so
 #LIBS+=/usr/local/opencv343/lib/libopencv_structured_light.so
 #LIBS+=/usr/local/opencv343/lib/libopencv_calib3d.so
-LIBS+=/usr/local/opencv343/lib/libopencv_imgcodecs.so
+#LIBS+=/usr/local/opencv343/lib/libopencv_imgcodecs.so
 #LIBS+=/usr/local/opencv343/lib/libopencv_aruco.so
-LIBS+=/usr/local/opencv343/lib/libopencv_highgui.so
-LIBS+=/usr/local/opencv343/lib/libopencv_core.so
+#LIBS+=/usr/local/opencv343/lib/libopencv_highgui.so
+#LIBS+=/usr/local/opencv343/lib/libopencv_core.so
 #LIBS+=/usr/local/opencv343/lib/libopencv_surface_matching.so
 #LIBS+=/usr/local/opencv343/lib/libopencv_ximgproc.so
 #LIBS+=/usr/local/opencv343/lib/libopencv_stitching.so
 #LIBS+=/usr/local/opencv343/lib/libopencv_phase_unwrapping.so
 #LIBS+=/usr/local/opencv343/lib/libopencv_videostab.so
-LIBS+=/usr/local/opencv343/lib/libopencv_imgproc.so
+#LIBS+=/usr/local/opencv343/lib/libopencv_imgproc.so
 #LIBS+=/usr/local/opencv343/lib/libopencv_dnn_objdetect.so
 #LIBS+=/usr/local/opencv343/lib/libopencv_saliency.so
 #LIBS+=/usr/local/opencv343/lib/libopencv_videoio.so
