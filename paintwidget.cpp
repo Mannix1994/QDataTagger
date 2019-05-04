@@ -29,7 +29,7 @@ void PaintWidget::setScale(int scale)
 {
     _scale = scale;
     if(!_image.isNull()){
-        _image = _image;
+        //_image = _image;
         setMinimumSize(_image.size()*scale);
         update();
     }

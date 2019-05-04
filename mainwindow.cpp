@@ -74,8 +74,8 @@ void MainWindow::updateImages()
     auto origin = _cvf.origin(ui->cb_origin->isChecked());
     auto mask = _cvf.mask(ui->cb_mask->isChecked());
     ui->la_canny->setPixmap(QPixmap::fromImage(canny.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
-    ui->la_origin->setPixmap(QPixmap::fromImage(origin.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
-    ui->la_mask->setPixmap(QPixmap::fromImage(mask.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
+    ui->la_origin->setPixmap(QPixmap::fromImage(origin.scaled(ui->la_origin->size(), Qt::KeepAspectRatio)));
+    ui->la_mask->setPixmap(QPixmap::fromImage(mask.scaled(ui->la_mask->size(), Qt::KeepAspectRatio)));
 }
 
 void MainWindow::checkSaved()
