@@ -97,9 +97,12 @@ bool MainWindow::checkExisted(const QString &im_path)
     if (save_path == ""){
         return false;
     }
-    QFile origin(save_path+"/origin/"+im_name);
-    QFile mask(save_path+"/mask/"+im_name);
-    qDebug() << save_path+"/origin/"+im_name;
+    if(!(save_path.endsWith('/') || save_path.endsWith('\\'))){
+        save_path += '/';
+    }
+    QFile origin(save_path+"origin/"+im_name);
+    QFile mask(save_path+"mask/"+im_name);
+    //qDebug() << save_path+"/origin/"+im_name;
     return origin.exists() && mask.exists();
 }
 
@@ -279,6 +282,9 @@ void MainWindow::on_pb_save_clicked()
             msg("保存路径为空");
             return;
         }
+        if(!(save_path.endsWith('/') || save_path.endsWith('\\'))){
+            save_path += '/';
+        }
         auto dir = QDir(save_path);
         if(!dir.exists()){
             auto button = QMessageBox::information(this, "提示", "保存目录不存在，是否创建?", QMessageBox::Ok, QMessageBox::Cancel);
@@ -289,19 +295,19 @@ void MainWindow::on_pb_save_clicked()
                 }
             }
         }
-        QDir origin_dir = save_path+("/origin");
-        QDir mask_dir = save_path+"/mask";
+        QDir origin_dir = save_path+("origin/");
+        QDir mask_dir = save_path+"mask/";
         if(!origin_dir.exists()){
             origin_dir.mkpath(origin_dir.absolutePath());
         }
         if(!mask_dir.exists()){
             mask_dir.mkpath(mask_dir.absolutePath());
         }
-        qDebug()<<origin_dir.absolutePath() +"/" +im_name;
-        if(!image.save(origin_dir.absolutePath() + "/"+im_name)){
+        qDebug()<<origin_dir.absolutePath() + im_name;
+        if(!image.save(origin_dir.absolutePath() + im_name)){
             msg("保存原图失败，请检查保存目录是否存在");
         }
-        if(!mask.save(mask_dir.absolutePath() + "/"+im_name)){
+        if(!mask.save(mask_dir.absolutePath() + im_name)){
             msg("保存Mask图失败，请检查保存目录是否存在");
         }
         _image_updated = false;
