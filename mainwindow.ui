@@ -30,22 +30,6 @@
      <string>原图</string>
     </property>
    </widget>
-   <widget class="QLabel" name="la_canny">
-    <property name="geometry">
-     <rect>
-      <x>1200</x>
-      <y>320</y>
-      <width>380</width>
-      <height>190</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Canny图显示区域</string>
-    </property>
-    <property name="text">
-     <string>Canny图</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="la_mask">
     <property name="geometry">
      <rect>
@@ -59,7 +43,7 @@
      <string>Mask图显示区域</string>
     </property>
     <property name="text">
-     <string>Mask图</string>
+     <string>修改后的图</string>
     </property>
    </widget>
    <widget class="QScrollArea" name="scrollArea">
@@ -84,76 +68,6 @@
       </rect>
      </property>
     </widget>
-   </widget>
-   <widget class="QLabel" name="la_threshold1">
-    <property name="geometry">
-     <rect>
-      <x>1300</x>
-      <y>10</y>
-      <width>91</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>threshhold1:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="la_threshold2">
-    <property name="geometry">
-     <rect>
-      <x>1450</x>
-      <y>20</y>
-      <width>91</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>threshhold2:</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="sb_threshold1">
-    <property name="geometry">
-     <rect>
-      <x>1390</x>
-      <y>20</y>
-      <width>48</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Canny函数的threshhold1</string>
-    </property>
-    <property name="minimum">
-     <number>1</number>
-    </property>
-    <property name="maximum">
-     <number>500</number>
-    </property>
-    <property name="value">
-     <number>50</number>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="sb_threshold2">
-    <property name="geometry">
-     <rect>
-      <x>1540</x>
-      <y>20</y>
-      <width>48</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Canny函数的threshhold2</string>
-    </property>
-    <property name="minimum">
-     <number>1</number>
-    </property>
-    <property name="maximum">
-     <number>500</number>
-    </property>
-    <property name="value">
-     <number>100</number>
-    </property>
    </widget>
    <widget class="QPushButton" name="pb_open">
     <property name="geometry">
@@ -209,69 +123,10 @@
      <string>D</string>
     </property>
    </widget>
-   <widget class="QLabel" name="la_blur">
-    <property name="geometry">
-     <rect>
-      <x>1200</x>
-      <y>10</y>
-      <width>41</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>blur:</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="cb_blur">
-    <property name="geometry">
-     <rect>
-      <x>1240</x>
-      <y>20</y>
-      <width>41</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>Blur函数的ksize大小</string>
-    </property>
-    <property name="currentIndex">
-     <number>1</number>
-    </property>
-    <item>
-     <property name="text">
-      <string>1</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>3</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>5</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>7</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>9</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>11</string>
-     </property>
-    </item>
-   </widget>
    <widget class="QCheckBox" name="cb_origin">
     <property name="geometry">
      <rect>
-      <x>1300</x>
+      <x>1190</x>
       <y>810</y>
       <width>71</width>
       <height>23</height>
@@ -284,52 +139,20 @@
      <string>原图</string>
     </property>
    </widget>
-   <widget class="QCheckBox" name="cb_canny">
-    <property name="geometry">
-     <rect>
-      <x>1380</x>
-      <y>810</y>
-      <width>92</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>显示Canny图</string>
-    </property>
-    <property name="text">
-     <string>Canny图</string>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="cb_mask">
     <property name="geometry">
      <rect>
-      <x>1480</x>
+      <x>1300</x>
       <y>810</y>
       <width>92</width>
       <height>23</height>
      </rect>
     </property>
     <property name="toolTip">
-     <string>显示Mask图</string>
+     <string>显示修改后的图</string>
     </property>
     <property name="text">
-     <string>Mask图</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cb_origin_canny">
-    <property name="geometry">
-     <rect>
-      <x>1180</x>
-      <y>810</y>
-      <width>101</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="toolTip">
-     <string>显示原图+Canny图</string>
-    </property>
-    <property name="text">
-     <string>原图+Canny</string>
+     <string>修改后的图</string>
     </property>
    </widget>
    <widget class="QLabel" name="la_scale">
@@ -451,16 +274,6 @@
       <string extracomment="覆盖检测出的Canny边">涂抹</string>
      </property>
     </item>
-    <item>
-     <property name="text">
-      <string extracomment="手动补上没检测出来的Canny边">标记</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string extracomment="消除不想标的阴影边">消除</string>
-     </property>
-    </item>
    </widget>
    <widget class="QPushButton" name="pb_save">
     <property name="geometry">
@@ -515,39 +328,6 @@
     <property name="text">
      <string>...</string>
     </property>
-   </widget>
-   <widget class="QLabel" name="la_canny_mode">
-    <property name="geometry">
-     <rect>
-      <x>850</x>
-      <y>10</y>
-      <width>67</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Canny源:</string>
-    </property>
-   </widget>
-   <widget class="QComboBox" name="cb_canny_mode">
-    <property name="geometry">
-     <rect>
-      <x>920</x>
-      <y>10</y>
-      <width>71</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <item>
-     <property name="text">
-      <string>灰度图</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>亮度图</string>
-     </property>
-    </item>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">

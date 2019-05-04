@@ -10,9 +10,9 @@ PaintWidget::PaintWidget(QWidget *parent) :
     QWidget(parent), _isDrawing(false), _penSize(5), _scale(1), _maxHistorySize(10)
 {
     _image = QImage(1,1,QImage::Format_RGB32);
-    backColor = qRgb(255,255,255);
+    backColor = qRgb(0,0,0);
     _image.fill(backColor);
-    _penColor = qRgb(255,255,255);
+    _penColor = qRgb(0,0,0);
 }
 
 void PaintWidget::setImage(QImage image)
@@ -20,6 +20,7 @@ void PaintWidget::setImage(QImage image)
 
     _size = image.size();
     _image = image;
+    _origin = image;
     _history.clear();
     _history.push_back(_image.copy());
     update();
@@ -29,7 +30,6 @@ void PaintWidget::setScale(int scale)
 {
     _scale = scale;
     if(!_image.isNull()){
-        _image = _image;
         setMinimumSize(_image.size()*scale);
         update();
     }
@@ -61,6 +61,11 @@ void PaintWidget::cancel()
 QImage PaintWidget::drawedImage()
 {
     return _image.copy();
+}
+
+QImage PaintWidget::origin()
+{
+    return _origin.copy();
 }
 
 void PaintWidget::paintEvent(QPaintEvent *){

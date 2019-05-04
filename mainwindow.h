@@ -44,10 +44,7 @@ private:
      * @brief checkSaved 检查当前图像是否已经保存
      */
     void checkSaved();
-    /**
-     * @brief checkExisted 检查要保存的文件是否在保存目录中存在
-     * @param im_path 源图像文件名
-     */
+
     bool checkExisted(const QString &im_path);
 
 protected:
@@ -64,12 +61,6 @@ private slots:
     void on_pb_pre_clicked();
     // 打开后一张图像，如果不存在，则不更新
     void on_pb_next_clicked();
-    // cv::Canny的threshold1变化，重新载入Canny等图像
-    void on_sb_threshold1_valueChanged(int arg1);
-    // cv::Canny的threshold2变化，重新载入Canny等图像
-    void on_sb_threshold2_valueChanged(int arg1);
-    // cv::Blur的ksize变化，重新载入Canny等图像
-    void on_cb_blur_currentIndexChanged(int index);
     // 缩放大小值变化，调整绘制窗口中图像的大小
     void on_sb_scale_valueChanged(int arg1);
     // 画笔大小变化
@@ -79,12 +70,8 @@ private slots:
     void on_cb_mode_currentIndexChanged(const QString &arg1);
     // 绘制控件中的图像发生了变化
     void on_image_changed();
-    // 显示原图+Canny图
-    void on_cb_origin_canny_clicked(bool checked);
     // 显示原图
     void on_cb_origin_clicked(bool checked);
-    // 显示Canny图
-    void on_cb_canny_clicked(bool checked);
     // 显示Mask图
     void on_cb_mask_clicked(bool checked);
     // 选择保存路径
@@ -93,8 +80,6 @@ private slots:
     void on_pb_cancel_clicked();
     // 保存当前的Mask和原图
     void on_pb_save_clicked();
-    // 当前是使用亮度图求Canny边还是使用灰度值求Canny边
-    void on_cb_canny_mode_currentIndexChanged(const QString &arg1);
 
 private:
     Ui::MainWindow *ui;
@@ -102,10 +87,11 @@ private:
     PaintWidget *_area;
     // 图片列表管理
     ImageList _imageList;
-    // 需要用到的OpenCV算法
+    // 需要用到的OpenCV
     CVFunctions _cvf;
     // 是否保存的标志
     bool _image_updated;
+
 };
 
 #endif // MAINWINDOW_H

@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->scrollArea->setWidget(_area);
     connect(_area, &PaintWidget::imageChanged, this, &MainWindow::on_image_changed);
-    setWindowTitle("QDataTagger");
+    setWindowTitle("QDataCleaner");
 }
 
 MainWindow::~MainWindow()
@@ -34,19 +34,18 @@ void MainWindow::setImage(QString im_path)
         msg("检查是否打开包含图片列表的文件");
         return;
     }
-    if(!_cvf.open(im_path)){
+    QImage origin;
+    if(!origin.load(im_path)){
         msg("图像: \"" + im_path + "\" 无法打开");
         return;
     }
     if(checkExisted(im_path)){
-        setWindowTitle("QDataTagger ("+QFileInfo(im_path).fileName()+" 已处理过)");
+        setWindowTitle("QDataCleaner ("+QFileInfo(im_path).fileName()+" 已处理过)");
     }else{
-        setWindowTitle("QDataTagger ("+QFileInfo(im_path).fileName()+")");
+        setWindowTitle("QDataCleaner ("+QFileInfo(im_path).fileName()+")");
     }
     ui->statusBar->showMessage(im_path);
-    auto withCanny = _cvf.withCanny(ui->cb_blur->currentText().toInt(), ui->sb_threshold1->value(), ui->sb_threshold2->value(),
-                                    ui->cb_origin_canny->isChecked());
-    _area->setImage(withCanny);
+    _area->setImage(origin);
     updateImages();
     _image_updated = false;
 }
@@ -63,19 +62,10 @@ void MainWindow::msg(const QString &title, const QString &content)
 
 void MainWindow::updateImages()
 {
-    if(!_cvf.isOpened())
-    {
-        return;
-    }
-    auto withCanny = _cvf.withCanny(ui->cb_blur->currentText().toInt(), ui->sb_threshold1->value(), ui->sb_threshold2->value(),
-                                    ui->cb_origin_canny->isChecked());
-    auto canny = _cvf.canny(ui->cb_blur->currentText().toInt(), ui->sb_threshold1->value(), ui->sb_threshold2->value(),
-                            ui->cb_canny->isChecked());
-    auto origin = _cvf.origin(ui->cb_origin->isChecked());
-    auto mask = _cvf.mask(ui->cb_mask->isChecked());
-    ui->la_canny->setPixmap(QPixmap::fromImage(canny.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
-    ui->la_origin->setPixmap(QPixmap::fromImage(origin.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
-    ui->la_mask->setPixmap(QPixmap::fromImage(mask.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
+    auto origin = _area->origin();
+    ui->la_origin->setPixmap(QPixmap::fromImage(origin.scaled(ui->la_origin->size(), Qt::KeepAspectRatio)));
+    auto d_image = _area->drawedImage();
+    ui->la_mask->setPixmap(QPixmap::fromImage(d_image.scaled(ui->la_mask->size(), Qt::KeepAspectRatio)));
 }
 
 void MainWindow::checkSaved()
@@ -87,23 +77,6 @@ void MainWindow::checkSaved()
             on_pb_save_clicked();
         }
     }
-}
-
-bool MainWindow::checkExisted(const QString &im_path)
-{
-    QFileInfo fi(im_path);
-    auto im_name = fi.fileName();
-    auto save_path = ui->le_save->text();
-    if (save_path == ""){
-        return false;
-    }
-    if(!(save_path.endsWith('/') || save_path.endsWith('\\'))){
-        save_path += '/';
-    }
-    QFile origin(save_path+"origin/"+im_name);
-    QFile mask(save_path+"mask/"+im_name);
-    //qDebug() << save_path+"/origin/"+im_name;
-    return origin.exists() && mask.exists();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e)
@@ -172,24 +145,6 @@ void MainWindow::on_pb_next_clicked()
     setImage(im_path);
 }
 
-void MainWindow::on_sb_threshold1_valueChanged(int arg1)
-{
-    Q_UNUSED(arg1);
-    setImage();
-}
-
-void MainWindow::on_sb_threshold2_valueChanged(int arg1)
-{
-    Q_UNUSED(arg1);
-    setImage();
-}
-
-void MainWindow::on_cb_blur_currentIndexChanged(int index)
-{
-    Q_UNUSED(index);
-    setImage();
-}
-
 void MainWindow::on_sb_scale_valueChanged(int arg1)
 {
     _area->setScale(arg1);
@@ -209,14 +164,8 @@ void MainWindow::on_pb_cancel_clicked()
 void MainWindow::on_cb_mode_currentIndexChanged(const QString &arg1)
 {
     if(arg1 == "涂抹"){
-        _area->setPenColor(qRgb(255, 255, 255));
+        _area->setPenColor(qRgb(0, 0, 0));
         ui->sb_pensize->setValue(5);
-    }else if(arg1 == "消除"){
-        _area->setPenColor(qRgb(0, 255, 0));
-        ui->sb_pensize->setValue(15);
-    }else if(arg1 == "标记"){
-        _area->setPenColor(qRgb(255, 255, 0));
-        ui->sb_pensize->setValue(1);
     }
 }
 
@@ -224,47 +173,29 @@ void MainWindow::on_image_changed()
 {
     _image_updated = true;
     auto im = _area->drawedImage();
-    auto mask = _cvf.mask(im, ui->cb_mask->isChecked());
-    ui->la_mask->setPixmap(QPixmap::fromImage(mask.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
-}
-
-void MainWindow::on_cb_origin_canny_clicked(bool checked)
-{
-    if (checked)
-    {
-       updateImages();
-    }
-    else
-        _cvf.closeWindow(CVFunctions::WITH_CANNY);
+    ui->la_mask->setPixmap(QPixmap::fromImage(im.scaled(ui->la_mask->size(), Qt::KeepAspectRatio)));
 }
 
 void MainWindow::on_cb_origin_clicked(bool checked)
 {
     if (checked)
     {
-        updateImages();
-    }
-    else
+        auto origin = _area->origin();
+        _cvf.show(origin, CVFunctions::ORIGIN);
+    }else{
         _cvf.closeWindow(CVFunctions::ORIGIN);
-}
-
-void MainWindow::on_cb_canny_clicked(bool checked)
-{
-    if (checked){
-        updateImages();
     }
-    else
-        _cvf.closeWindow(CVFunctions::CANNY);
 }
 
 void MainWindow::on_cb_mask_clicked(bool checked)
 {
     if (checked)
     {
-        updateImages();
-    }
-    else
+        auto origin = _area->drawedImage();
+        _cvf.show(origin, CVFunctions::MASK);
+    }else{
         _cvf.closeWindow(CVFunctions::MASK);
+    }
 }
 
 void MainWindow::on_pb_choose_clicked()
@@ -280,55 +211,48 @@ void MainWindow::on_pb_choose_clicked()
 
 void MainWindow::on_pb_save_clicked()
 {
-    if(_cvf.isOpened()){
-        auto mask_im = _area->drawedImage();
-        auto mask = _cvf.mask(mask_im, false);
-        auto image = _cvf.origin(mask_im, false);
-        auto im_info = QFileInfo(ui->statusBar->currentMessage());
-        auto im_name = im_info.fileName();
-        auto save_path = ui->le_save->text();
-        if (save_path == ""){
-            msg("保存路径为空");
-            return;
-        }
-        if(!(save_path.endsWith('/') || save_path.endsWith('\\'))){
-            save_path += '/';
-        }
-        auto dir = QDir(save_path);
-        if(!dir.exists()){
-            auto button = QMessageBox::information(this, "提示", "保存目录不存在，是否创建?", QMessageBox::Ok, QMessageBox::Cancel);
-            if(button == QMessageBox::Ok){
-                if(!dir.mkpath(save_path)){
-                    msg("创建保存目录失败，请检查保存是否有权限读写保存路径");
-                    return;
-                }
+    auto image = _area->drawedImage();
+    auto im_info = QFileInfo(ui->statusBar->currentMessage());
+    auto im_name = im_info.fileName();
+    auto save_path = ui->le_save->text();
+    if (save_path == ""){
+        msg("保存路径为空");
+        return;
+    }
+    if(!(save_path.endsWith('/') || save_path.endsWith('\\'))){
+        save_path += '/';
+    }
+    auto dir = QDir(save_path);
+    if(!dir.exists()){
+        auto button = QMessageBox::information(this, "提示", "保存目录不存在，是否创建?", QMessageBox::Ok, QMessageBox::Cancel);
+        if(button == QMessageBox::Ok){
+            if(!dir.mkpath(save_path)){
+                msg("创建保存目录失败，请检查保存是否有权限读写保存路径");
+                return;
             }
         }
-        QDir origin_dir = save_path+("origin");
-        QDir mask_dir = save_path+"mask";
-        if(!origin_dir.exists()){
-            origin_dir.mkpath(origin_dir.absolutePath());
-        }
-        if(!mask_dir.exists()){
-            mask_dir.mkpath(mask_dir.absolutePath());
-        }
-        qDebug()<<origin_dir.absolutePath() +"/" +im_name;
-        if(!image.save(origin_dir.absolutePath() + "/"+im_name)){
-            msg("保存原图失败，请检查保存目录是否存在");
-        }
-        if(!mask.save(mask_dir.absolutePath() + "/"+im_name)){
-            msg("保存Mask图失败，请检查保存目录是否存在");
-        }
-        _image_updated = false;
     }
+
+    if(!image.save(dir.absolutePath() + "/"+im_name)){
+        msg("保存原图失败，请检查保存目录是否存在");
+    }
+    _image_updated = false;
 }
 
-void MainWindow::on_cb_canny_mode_currentIndexChanged(const QString &arg1)
+
+bool MainWindow::checkExisted(const QString &im_path)
 {
-    if(arg1=="灰度图"){
-        _cvf.setCannySource(CVFunctions::USE_GARY);
-    }else if(arg1 == "亮度图"){
-        _cvf.setCannySource(CVFunctions::USE_LIGHT);
+    QFileInfo fi(im_path);
+    auto im_name = fi.fileName();
+    auto save_path = ui->le_save->text();
+    if (save_path == ""){
+        return false;
     }
-    setImage();
+    if(!(save_path.endsWith('/') || save_path.endsWith('\\'))){
+        save_path += '/';
+    }
+    QFile origin(save_path+im_name);
+    QFile mask(save_path+im_name);
+    return origin.exists() && mask.exists();
 }
+
