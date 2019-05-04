@@ -39,7 +39,7 @@ void MainWindow::setImage(QString im_path)
         return;
     }
     if(checkExisted(im_path)){
-        setWindowTitle("QDataTagger ("+QFileInfo(im_path).fileName()+" 已存在)");
+        setWindowTitle("QDataTagger ("+QFileInfo(im_path).fileName()+" 已处理过)");
     }else{
         setWindowTitle("QDataTagger ("+QFileInfo(im_path).fileName()+")");
     }
@@ -201,7 +201,7 @@ void MainWindow::on_cb_mode_currentIndexChanged(const QString &arg1)
 {
     if(arg1 == "涂抹"){
         _area->setPenColor(qRgb(255, 255, 255));
-        ui->sb_pensize->setValue(6);
+        ui->sb_pensize->setValue(5);
     }else if(arg1 == "消除"){
         _area->setPenColor(qRgb(0, 255, 0));
         ui->sb_pensize->setValue(15);
