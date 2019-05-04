@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->scrollArea->setWidget(_area);
     connect(_area, &PaintWidget::imageChanged, this, &MainWindow::on_image_changed);
+    setWindowTitle("QDataTagger");
 }
 
 MainWindow::~MainWindow()
@@ -270,4 +271,14 @@ void MainWindow::on_pb_save_clicked()
             msg("保存Mask图失败，请检查保存目录是否存在");
         }
     }
+}
+
+void MainWindow::on_cb_canny_mode_currentIndexChanged(const QString &arg1)
+{
+    if(arg1=="灰度图"){
+        _cvf.setCannySource(CVFunctions::USE_GARY);
+    }else if(arg1 == "亮度图"){
+        _cvf.setCannySource(CVFunctions::USE_LIGHT);
+    }
+    setImage();
 }

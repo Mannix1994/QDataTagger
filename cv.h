@@ -13,7 +13,7 @@ class CVFunctions : public QObject
     Q_OBJECT
 public:
     /**
-     * @brief The WINDDOW_STRING class 定义窗口类型的字符串，就算将来修改字符串，各个地方还是一样的
+     * @brief 定义窗口类型的字符串，就算将来修改字符串，各个地方还是一样的
      */
     class WINDDOW_STRING
     {
@@ -23,6 +23,7 @@ public:
     };
     // 窗口类型，分别是Canny、原图+Canny、Mask、原图
     typedef enum {CANNY, WITH_CANNY, MASK, ORIGIN} WINDOW;
+    typedef enum {USE_GARY, USE_LIGHT} CANNY_SOURCE;
 
     explicit CVFunctions(QObject *parent = nullptr);
     /**
@@ -94,6 +95,11 @@ public:
      * @param window 就是之前说明的几种窗口
      */
     void closeWindow(WINDOW window);
+    /**
+     * @brief setCannySource 设置Canny时的源图。
+     * @param cs USE_GRAY就是使用灰度图，USE_LIGHT是使用亮度图。
+     */
+    void setCannySource(CANNY_SOURCE _cs);
 private:
     /**
      * @brief canny_ 计算原图的Canny图
@@ -116,13 +122,15 @@ private:
     // Mask图像
     cv::Mat _mask;
     // 灰度图
-    cv::Mat _gray;
+    cv::Mat _gray_or_light;
     // Canny图像
     cv::Mat _canny;
     // 是否有打开图像
     bool _open;
     // 窗口子字符串
-    WINDDOW_STRING ws;
+    WINDDOW_STRING _ws;
+    // Canny 源图
+    CANNY_SOURCE _cs;
 
 signals:
 

@@ -82,6 +82,8 @@ private slots:
     // 保存当前的Mask和原图
     void on_pb_save_clicked();
 
+    void on_cb_canny_mode_currentIndexChanged(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
     // 画板组件

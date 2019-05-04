@@ -3,7 +3,7 @@
 #include"convert.h"
 #include<QMessageBox>
 
-CVFunctions::CVFunctions(QObject *parent) : QObject(parent), _open(false)
+CVFunctions::CVFunctions(QObject *parent) : QObject(parent), _open(false), _cs(USE_GARY)
 {
 
 }
@@ -27,16 +27,48 @@ bool CVFunctions::open(QImage &image)
     }
     _origin = toMat(image, true);
     _origin_1 = _origin - 1;
-    // 求灰度图
-    if (_origin_1.type() == CV_8UC4)
-        cv::cvtColor(_origin_1, _gray, cv::COLOR_BGRA2GRAY);
-    else if(_origin_1.type() == CV_8UC3)
-        cv::cvtColor(_origin_1, _gray, cv::COLOR_BGR2GRAY);
-    else if(_origin_1.type() == CV_8UC1)
-        _gray = _origin_1.clone();
-    else{
-        QMessageBox::critical(nullptr, "警告", "错误33: 不支持此类型的图像");
+    if(_cs == USE_GARY) { // 求灰度图
+
+        if (_origin_1.type() == CV_8UC4)
+            cv::cvtColor(_origin_1, _gray_or_light, cv::COLOR_BGRA2GRAY);
+        else if(_origin_1.type() == CV_8UC3)
+            cv::cvtColor(_origin_1, _gray_or_light, cv::COLOR_BGR2GRAY);
+        else if(_origin_1.type() == CV_8UC1)
+            _gray_or_light = _origin_1.clone();
+        else{
+            QMessageBox::critical(nullptr, "警告", "错误33: 不支持此类型的图像");
+        }
+    }else if (_cs == USE_LIGHT){ // 求亮度图
+        cv::Mat bgr_image;
+        bool is_gray = false;
+
+        if (_origin_1.type() == CV_8UC4)
+            cv::cvtColor(_origin_1, bgr_image, cv::COLOR_BGRA2BGR);
+        else if(_origin_1.type() == CV_8UC3)
+            bgr_image = _origin_1;
+        else if(_origin_1.type() == CV_8UC1)
+        {
+            is_gray = true;
+            _gray_or_light = _origin_1.clone();
+        }
+        else{
+            QMessageBox::critical(nullptr, "警告", "错误33: 不支持此类型的图像");
+        }
+        // 若_origin_1不是灰度图
+        if(!is_gray){
+            // 转换颜色空间
+            cv::cvtColor(bgr_image, bgr_image, cv::COLOR_BGR2Lab);
+            // 分离三个通道
+            cv::Mat channels[3];
+            cv::split(bgr_image, channels);
+            // 第一个通道就是亮度图
+            _gray_or_light = channels[0].clone();
+        }
+    }else{
+        QMessageBox::critical(nullptr, "警告", "错误45: 暂时不支持此Canny源");
     }
+    cv::imshow("light", _gray_or_light);
+    cv::waitKey(1);
     // 定义一个空的Mask
     _mask = cv::Mat(_origin_1.size(), CV_8UC1, cv::Scalar::all(0));
     _open = true;
@@ -52,7 +84,7 @@ QImage CVFunctions::canny(int blur, int threshold1, int threshold2, bool show)
 {
     auto _canny = canny_(blur, threshold1, threshold2);
     if(show){
-        showMat(ws.CANNY, _canny);
+        showMat(_ws.CANNY, _canny);
     }
     return toQImage(_canny);
 }
@@ -93,7 +125,7 @@ QImage CVFunctions::withCanny(int blur, int threshold1, int threshold2, bool sho
         QMessageBox::critical(nullptr, "错误", "错误72: 不支持此类型的图像");
     }
     if(show){
-        showMat(ws.WITH_CANNY, mat);
+        showMat(_ws.WITH_CANNY, mat);
     }
     return toQImage(mat);
 }
@@ -101,7 +133,7 @@ QImage CVFunctions::withCanny(int blur, int threshold1, int threshold2, bool sho
 QImage CVFunctions::mask(bool show)
 {
     if(show){
-        showMat(ws.MASK, _mask);
+        showMat(_ws.MASK, _mask);
     }
     return toQImage(_mask);
 }
@@ -147,7 +179,7 @@ QImage CVFunctions::mask(const QImage &image, bool show)
 QImage CVFunctions::origin(bool show)
 {
     if(show){
-        showMat(ws.ORIGIN, _origin);
+        showMat(_ws.ORIGIN, _origin);
     }
     return toQImage(_origin);
 }
@@ -184,7 +216,7 @@ QImage CVFunctions::origin(const QImage &image, bool show)
         QMessageBox::critical(nullptr, "错误", "错误181: 不支持此类型的图像");
     }
     if(show){
-        showMat(ws.ORIGIN, im);
+        showMat(_ws.ORIGIN, im);
     }
     return toQImage(im);
 }
@@ -200,29 +232,34 @@ void CVFunctions::closeWindow(CVFunctions::WINDOW window)
 {
     switch (window) {
     case CANNY:
-        cv::namedWindow(ws.CANNY);
-        cv::destroyWindow(ws.CANNY);
+        cv::namedWindow(_ws.CANNY);
+        cv::destroyWindow(_ws.CANNY);
         break;
     case MASK:
-        cv::namedWindow(ws.MASK);
-        cv::destroyWindow(ws.MASK);
+        cv::namedWindow(_ws.MASK);
+        cv::destroyWindow(_ws.MASK);
         break;
     case WITH_CANNY:
-        cv::namedWindow(ws.WITH_CANNY);
-        cv::destroyWindow(ws.WITH_CANNY);
+        cv::namedWindow(_ws.WITH_CANNY);
+        cv::destroyWindow(_ws.WITH_CANNY);
         break;
     case ORIGIN:
-        cv::namedWindow(ws.ORIGIN);
-        cv::destroyWindow(ws.ORIGIN);
+        cv::namedWindow(_ws.ORIGIN);
+        cv::destroyWindow(_ws.ORIGIN);
         break;
     default:
         break;
     }
 }
 
+void CVFunctions::setCannySource(CVFunctions::CANNY_SOURCE cs)
+{
+    _cs = cs;
+}
+
 cv::Mat CVFunctions::canny_(int blur, int threshold1, int threshold2)
 {
-    cv::blur(_gray, _canny, cv::Size(blur, blur));
+    cv::blur(_gray_or_light, _canny, cv::Size(blur, blur));
     cv::Canny(_canny, _canny, threshold1, threshold2);
     return _canny;
 }
