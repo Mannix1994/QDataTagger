@@ -158,7 +158,7 @@ void MainWindow::on_sb_pensize_valueChanged(int arg1)
 void MainWindow::on_pb_cancel_clicked()
 {
     _area->cancel();
-    on_image_changed();
+    //on_image_changed();
 }
 
 void MainWindow::on_cb_mode_currentIndexChanged(const QString &arg1)
