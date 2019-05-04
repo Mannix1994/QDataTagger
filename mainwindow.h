@@ -44,6 +44,11 @@ private:
      * @brief checkSaved 检查当前图像是否已经保存
      */
     void checkSaved();
+    /**
+     * @brief checkExisted 检查要保存的文件是否在保存目录中存在
+     * @param im_path 源图像文件名
+     */
+    bool checkExisted(const QString &im_path);
 
 protected:
     /**

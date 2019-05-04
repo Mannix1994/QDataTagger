@@ -38,6 +38,11 @@ void MainWindow::setImage(QString im_path)
         msg("图像: \"" + im_path + "\" 无法打开");
         return;
     }
+    if(checkExisted(im_path)){
+        setWindowTitle("QDataTagger ("+QFileInfo(im_path).fileName()+" 已存在)");
+    }else{
+        setWindowTitle("QDataTagger ("+QFileInfo(im_path).fileName()+")");
+    }
     ui->statusBar->showMessage(im_path);
     auto withCanny = _cvf.withCanny(ui->cb_blur->currentText().toInt(), ui->sb_threshold1->value(), ui->sb_threshold2->value(),
                                     ui->cb_origin_canny->isChecked());
@@ -84,6 +89,20 @@ void MainWindow::checkSaved()
     }
 }
 
+bool MainWindow::checkExisted(const QString &im_path)
+{
+    QFileInfo fi(im_path);
+    auto im_name = fi.fileName();
+    auto save_path = ui->le_save->text();
+    if (save_path == ""){
+        return false;
+    }
+    QFile origin(save_path+"/origin/"+im_name);
+    QFile mask(save_path+"/mask/"+im_name);
+    qDebug() << save_path+"/origin/"+im_name;
+    return origin.exists() && mask.exists();
+}
+
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
     static bool showScrollBar=true;
@@ -109,7 +128,7 @@ void MainWindow::on_pb_open_clicked()
 {
     QString home_path = QStandardPaths::standardLocations(QStandardPaths::HomeLocation)[0];
     QString list_file = QFileDialog::getOpenFileName(this, QString(),home_path,"TXT (*.txt)");
-    ui->statusBar->showMessage(list_file);
+    //ui->statusBar->showMessage(list_file);
     if (list_file == "")
         return;
     if (_imageList.open(list_file))
