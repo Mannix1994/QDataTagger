@@ -16,7 +16,7 @@ class PaintWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit PaintWidget(QWidget *parent = 0);//------------构造函数
+    explicit PaintWidget(QWidget *parent = nullptr);//------------构造函数
     /**
      * @brief setImage 设置当前要绘制的图像
      * @param image 原图+Canny边图
