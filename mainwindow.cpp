@@ -200,8 +200,11 @@ void MainWindow::on_cb_mask_clicked(bool checked)
 
 void MainWindow::on_pb_choose_clicked()
 {
-    QString home_path = QStandardPaths::standardLocations(QStandardPaths::HomeLocation)[0];
-    QString save_dir = QFileDialog::getExistingDirectory(this, QString(), home_path);
+    QString s = ui->statusBar->currentMessage();
+    if(s == ""){
+        s =  QStandardPaths::standardLocations(QStandardPaths::HomeLocation)[0];
+    }
+    QString save_dir = QFileDialog::getExistingDirectory(this, QString(), s);
     if (save_dir == "")
         return;
     else{
