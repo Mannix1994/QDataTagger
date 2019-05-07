@@ -31,9 +31,9 @@ bool CVFunctions::open(QImage &image)
     // 统一转换为三通道的图
     if (_origin.type() == CV_8UC4){
         cv::cvtColor(_origin, _origin, cv::COLOR_BGRA2BGR);
-    }else if(_origin_1.type() == CV_8UC1){
+    }else if(_origin.type() == CV_8UC3){
         // 不做操作
-    }else if(_origin_1.type() == CV_8UC1){
+    }else if(_origin.type() == CV_8UC1){
         cv::cvtColor(_origin, _origin, cv::COLOR_GRAY2BGR);
     }else{
         QMessageBox::critical(nullptr, "警告", "错误33: 不支持此类型的图像");
