@@ -34,12 +34,6 @@ public:
      */
     bool open(const QString &im_path);
     /**
-     * @brief open 打开一张待处理的图像
-     * @param image QImage图像对象
-     * @return 如果打开成功返回true，打开失败返回false
-     */
-    bool open(QImage &image);
-    /**
      * @brief isOpened 是否打开了一张图像
      * @return 打开了返回true，没打开返回false
      */
@@ -101,6 +95,12 @@ public:
      */
     void setCannySource(CANNY_SOURCE _cs);
 private:
+    /**
+     * @brief open 打开一张待处理的图像
+     * @param image QImage图像对象
+     * @return 如果打开成功返回true，打开失败返回false
+     */
+    bool open(QImage &image);
     /**
      * @brief canny_ 计算原图的Canny图
      * @param blur cv::Blur函数的ksize参数

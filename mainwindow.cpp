@@ -276,13 +276,13 @@ void MainWindow::on_pb_cancel_clicked()
 void MainWindow::on_cb_mode_currentIndexChanged(const QString &arg1)
 {
     if(arg1 == "涂抹"){
-        _area->setPenColor(qRgb(255, 255, 255));
-        ui->sb_pensize->setValue(5);
+        _area->setPenColor(PaintWidget::WHITE);
+        ui->sb_pensize->setValue(50);
     }else if(arg1 == "消除"){
-        _area->setPenColor(qRgb(0, 255, 0));
-        ui->sb_pensize->setValue(15);
+        _area->setPenColor(PaintWidget::GREEN);
+        ui->sb_pensize->setValue(50);
     }else if(arg1 == "标记"){
-        _area->setPenColor(qRgb(255, 255, 0));
+        _area->setPenColor(PaintWidget::YELLOW);
         ui->sb_pensize->setValue(1);
     }
 }
