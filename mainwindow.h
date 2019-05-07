@@ -43,12 +43,17 @@ private:
     /**
      * @brief checkSaved 检查当前图像是否已经保存
      */
-    void checkSaved();
+    bool checkSaved();
     /**
      * @brief checkExisted 检查要保存的文件是否在保存目录中存在
      * @param im_path 源图像文件名
      */
     bool checkExisted(const QString &im_path);
+    /**
+     * @brief save 完成保存图像的工作
+     * @return 保存成功返回true，失败返回false
+     */
+    bool save();
 
 protected:
     /**
@@ -95,6 +100,8 @@ private slots:
     void on_pb_save_clicked();
     // 当前是使用亮度图求Canny边还是使用灰度值求Canny边
     void on_cb_canny_mode_currentIndexChanged(const QString &arg1);
+
+    void on_pb_fullscreen_clicked();
 
 private:
     Ui::MainWindow *ui;

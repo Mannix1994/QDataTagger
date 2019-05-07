@@ -22,50 +22,44 @@ bool CVFunctions::open(const QString &im_path)
 bool CVFunctions::open(QImage &image)
 {
     _open = false;
+    // 检查图像是否为空
     if (image.isNull()){
         return false;
     }
+    // 把QImage转换为cv::Mat
     _origin = toMat(image, true);
-    _origin_1 = _origin - 1;
-    if(_cs == USE_GARY) { // 求灰度图
-
-        if (_origin_1.type() == CV_8UC4)
-            cv::cvtColor(_origin_1, _gray_or_light, cv::COLOR_BGRA2GRAY);
-        else if(_origin_1.type() == CV_8UC3)
-            cv::cvtColor(_origin_1, _gray_or_light, cv::COLOR_BGR2GRAY);
-        else if(_origin_1.type() == CV_8UC1)
-            _gray_or_light = _origin_1.clone();
-        else{
-            QMessageBox::critical(nullptr, "警告", "错误33: 不支持此类型的图像");
-        }
-    }else if (_cs == USE_LIGHT){ // 求亮度图
-        cv::Mat bgr_image;
-        bool is_gray = false;
-
-        if (_origin_1.type() == CV_8UC4)
-            cv::cvtColor(_origin_1, bgr_image, cv::COLOR_BGRA2BGR);
-        else if(_origin_1.type() == CV_8UC3)
-            bgr_image = _origin_1;
-        else if(_origin_1.type() == CV_8UC1)
-        {
-            is_gray = true;
-            _gray_or_light = _origin_1.clone();
-        }
-        else{
-            QMessageBox::critical(nullptr, "警告", "错误33: 不支持此类型的图像");
-        }
-        // 若_origin_1不是灰度图
-        if(!is_gray){
-            // 转换颜色空间
-            cv::cvtColor(bgr_image, bgr_image, cv::COLOR_BGR2Lab);
-            // 分离三个通道
-            cv::Mat channels[3];
-            cv::split(bgr_image, channels);
-            // 第一个通道就是亮度图
-            _gray_or_light = channels[0].clone();
-        }
+    // 统一转换为三通道的图
+    if (_origin.type() == CV_8UC4){
+        cv::cvtColor(_origin, _origin, cv::COLOR_BGRA2BGR);
+    }else if(_origin_1.type() == CV_8UC1){
+        // 不做操作
+    }else if(_origin_1.type() == CV_8UC1){
+        cv::cvtColor(_origin, _origin, cv::COLOR_GRAY2BGR);
     }else{
-        QMessageBox::critical(nullptr, "警告", "错误45: 暂时不支持此Canny源");
+        QMessageBox::critical(nullptr, "警告", "错误33: 不支持此类型的图像");
+    }
+    // 减去1，保证颜色标记都大于图像值
+    _origin_1 = _origin - 1;
+    // 根据不同的选项求Canny源
+    if(_cs == USE_GARY) { // 求灰度图作为Canny源
+        cv::cvtColor(_origin_1, _gray_or_light, cv::COLOR_BGR2GRAY);
+    }else if (_cs == USE_LIGHT){ // 求亮度图作为Canny源
+        cv::Mat bgr_image;
+        // 转换颜色空间
+        cv::cvtColor(_origin_1, bgr_image, cv::COLOR_BGR2Lab);
+        // 分离三个通道
+        cv::Mat channels[3];
+        cv::split(bgr_image, channels);
+        // 第一个通道就是亮度图
+        _gray_or_light = channels[0].clone();
+    }else if(_cs==USE_EQ_HIST){
+        cv::cvtColor(_origin_1, _gray_or_light, cv::COLOR_BGR2GRAY);
+        cv::equalizeHist(_gray_or_light, _gray_or_light);
+        //cv::imshow("msf", _gray_or_light);
+        //cv::waitKey(1);
+    }
+    else{
+        QMessageBox::critical(nullptr, "警告", "错误81: 暂时不支持此Canny源");
     }
     //cv::imshow("light", _gray_or_light);
     //cv::waitKey(1);
@@ -93,16 +87,7 @@ QImage CVFunctions::withCanny(int blur, int threshold1, int threshold2, bool sho
 {
     auto _canny = canny_(blur, threshold1, threshold2);
     cv::Mat mat = _origin_1.clone();
-    if(mat.type() == CV_8UC4)
-    {
-        for(int i=0;i<_origin_1.rows;++i){
-            for(int j=0;j<_origin_1.cols;++j){
-                if(_canny.at<uchar>(i, j)==255){
-                    mat.at<cv::Vec4b>(i, j) = cv::Vec4b(0, 0, 255, 255);
-                }
-            }
-        }
-    }else if(mat.type() == CV_8UC3)
+    if(mat.type() == CV_8UC3)
     {
         for(int i=0;i<_origin_1.rows;++i){
             for(int j=0;j<_origin_1.cols;++j){
@@ -111,18 +96,8 @@ QImage CVFunctions::withCanny(int blur, int threshold1, int threshold2, bool sho
                 }
             }
         }
-    }else if(mat.type() == CV_8UC1)
-    {
-        for(int i=0;i<_origin_1.rows;++i){
-            for(int j=0;j<_origin_1.cols;++j){
-                if(_canny.at<uchar>(i, j)==255){
-                    mat.at<uchar>(i, j) = 255;
-                }
-            }
-        }
-    }
-    else{
-        QMessageBox::critical(nullptr, "错误", "错误72: 不支持此类型的图像");
+    }else{
+        QMessageBox::critical(nullptr, "错误", "错误72: 代码有错误，请开发者检查");
     }
     if(show){
         showMat(_ws.WITH_CANNY, mat);
@@ -141,22 +116,13 @@ QImage CVFunctions::mask(bool show)
 QImage CVFunctions::mask(const QImage &image, bool show)
 {
     auto im = toMat(image);
+    if(im.type() == CV_8UC4)
+        cv::cvtColor(im, im, cv::COLOR_BGRA2BGR);
+    else if(im.type() == CV_8UC1)
+        cv::cvtColor(im, im, cv::COLOR_GRAY2BGR);
     cv::resize(im, im, _origin.size());
     _mask.setTo(cv::Scalar::all(0));
-    if(im.type() == CV_8UC4)
-    {
-        for(int i=0;i<_origin_1.rows;++i){
-            for(int j=0;j<_origin_1.cols;++j){
-                auto val = im.at<cv::Vec4b>(i, j);
-                if(val == cv::Vec4b(0, 255, 0, 255))
-                    continue;
-                if((_canny.at<uchar>(i, j)==255 && val==cv::Vec4b(255, 255, 255, 255)) || val == cv::Vec4b(0, 255, 255, 255))
-                {
-                    _mask.at<uchar>(i, j) = 255;
-                }
-            }
-        }
-    }else if(im.type() == CV_8UC3)
+    if(im.type() == CV_8UC3)
     {
         for(int i=0;i<_origin_1.rows;++i){
             for(int j=0;j<_origin_1.cols;++j){
@@ -171,7 +137,7 @@ QImage CVFunctions::mask(const QImage &image, bool show)
         }
     }
     else{
-        QMessageBox::critical(nullptr, "错误", "错误72: 不支持此类型的图像");
+        QMessageBox::critical(nullptr, "错误", "错误132: 请开发者检查代码错误");
     }
     return mask(show);
 }
@@ -187,20 +153,13 @@ QImage CVFunctions::origin(bool show)
 QImage CVFunctions::origin(const QImage &image, bool show)
 {
     auto mask_im = toMat(image);
+    if(mask_im.type() == CV_8UC4)
+        cv::cvtColor(mask_im, mask_im, cv::COLOR_BGRA2BGR);
+    else if(mask_im.type() == CV_8UC1)
+        cv::cvtColor(mask_im, mask_im, cv::COLOR_GRAY2BGR);
     cv::resize(mask_im, mask_im, _origin.size());
     auto im = _origin.clone();
-    if(mask_im.type() == CV_8UC4)
-    {
-        for(int i=0;i<_origin_1.rows;++i){
-            for(int j=0;j<_origin_1.cols;++j){
-                auto val = mask_im.at<cv::Vec4b>(i, j);
-                if(val==cv::Vec4b(0, 255, 0, 255))
-                {
-                    im.at<cv::Vec4b>(i, j) = cv::Vec4b(0, 0, 0, 255);
-                }
-            }
-        }
-    }else if(mask_im.type() == CV_8UC3)
+    if(mask_im.type() == CV_8UC3)
     {
         for(int i=0;i<_origin_1.rows;++i){
             for(int j=0;j<_origin_1.cols;++j){
@@ -213,7 +172,7 @@ QImage CVFunctions::origin(const QImage &image, bool show)
         }
     }
     else{
-        QMessageBox::critical(nullptr, "错误", "错误181: 不支持此类型的图像");
+        QMessageBox::critical(nullptr, "错误", "错误181: 请开发者检查代码错误");
     }
     if(show){
         showMat(_ws.ORIGIN, im);

@@ -78,14 +78,21 @@ void MainWindow::updateImages()
     ui->la_mask->setPixmap(QPixmap::fromImage(mask.scaled(ui->la_mask->size(), Qt::KeepAspectRatio)));
 }
 
-void MainWindow::checkSaved()
+bool MainWindow::checkSaved()
 {
     if(_image_updated){
-        auto button = QMessageBox::question(this, "提示", "当前图像尚未保存，是否保存？", QMessageBox::Ok, QMessageBox::Cancel);
-        if(button == QMessageBox::Ok){
+        auto button = QMessageBox::question(this, "提示", "当前图像尚未保存，是否保存？", "保存", "不保存", "取消", 2);
+        //qDebug()<<button;
+        if(button == 0){
             // 保存图像
-            on_pb_save_clicked();
+            return save();
+        }else if(button == 1){
+            return true;
+        }else {
+            return false;
         }
+    }else{
+        return true;
     }
 }
 
@@ -104,6 +111,56 @@ bool MainWindow::checkExisted(const QString &im_path)
     QFile mask(save_path+"mask/"+im_name);
     //qDebug() << save_path+"/origin/"+im_name;
     return origin.exists() && mask.exists();
+}
+
+bool MainWindow::save()
+{
+    if(_cvf.isOpened()){
+        auto mask_im = _area->drawedImage();
+        auto mask = _cvf.mask(mask_im, false);
+        auto image = _cvf.origin(mask_im, false);
+        auto im_info = QFileInfo(ui->statusBar->currentMessage());
+        auto im_name = im_info.fileName();
+        auto save_path = ui->le_save->text();
+        if (save_path == ""){
+            msg("保存路径为空");
+            return false;
+        }
+        if(!(save_path.endsWith('/') || save_path.endsWith('\\'))){
+            save_path += '/';
+        }
+        auto dir = QDir(save_path);
+        if(!dir.exists()){
+            auto button = QMessageBox::information(this, "提示", "保存目录不存在，是否创建?", QMessageBox::Ok, QMessageBox::Cancel);
+            if(button == QMessageBox::Ok){
+                if(!dir.mkpath(save_path)){
+                    msg("创建保存目录失败，请检查保存是否有权限读写保存路径");
+                    return false;
+                }
+            }
+        }
+        QDir origin_dir = save_path+("origin");
+        QDir mask_dir = save_path+"mask";
+        if(!origin_dir.exists()){
+            origin_dir.mkpath(origin_dir.absolutePath());
+        }
+        if(!mask_dir.exists()){
+            mask_dir.mkpath(mask_dir.absolutePath());
+        }
+        qDebug()<<origin_dir.absolutePath() +"/" +im_name;
+        if(!image.save(origin_dir.absolutePath() + "/"+im_name)){
+            msg("保存原图失败，请检查保存目录是否存在");
+            return false;
+        }
+        if(!mask.save(mask_dir.absolutePath() + "/"+im_name)){
+            msg("保存Mask图失败，请检查保存目录是否存在");
+            return false;
+        }
+        _image_updated = false;
+        return true;
+    }else {
+        return  false;
+    }
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e)
@@ -131,6 +188,14 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         else{
             ui->sb_pensize->setValue(50);
         }
+    }else if(e->key() == Qt::Key_E){
+        if(ui->cb_mode->currentIndex() == 0 ){
+            ui->cb_mode->setCurrentIndex(1);
+        }else if(ui->cb_mode->currentIndex() == 1 ){
+            ui->cb_mode->setCurrentIndex(2);
+        }else if(ui->cb_mode->currentIndex() == 2 ){
+            ui->cb_mode->setCurrentIndex(0);
+        }
     }
     // 其他按键事件在ui界面去修改
     e->accept();
@@ -152,7 +217,8 @@ void MainWindow::on_pb_open_clicked()
 
 void MainWindow::on_pb_pre_clicked()
 {
-    checkSaved();
+    if(!checkSaved())
+        return;
     auto im_path = _imageList.pre();
     if(!im_path.length()){
         msg("没有上一张了啦");
@@ -163,7 +229,8 @@ void MainWindow::on_pb_pre_clicked()
 
 void MainWindow::on_pb_next_clicked()
 {
-    checkSaved();
+    if(!checkSaved())
+        return;
     auto im_path = _imageList.next();
     if(!im_path.length()){
         msg("没有下一张了啦");
@@ -224,6 +291,11 @@ void MainWindow::on_image_changed()
 {
     _image_updated = true;
     auto im = _area->drawedImage();
+    if(im.isNull())
+    {
+        qDebug() << __LINE__ << " " << "drawedImage为空";
+        return;
+    }
     auto mask = _cvf.mask(im, ui->cb_mask->isChecked());
     ui->la_mask->setPixmap(QPixmap::fromImage(mask.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
 }
@@ -283,47 +355,7 @@ void MainWindow::on_pb_choose_clicked()
 
 void MainWindow::on_pb_save_clicked()
 {
-    if(_cvf.isOpened()){
-        auto mask_im = _area->drawedImage();
-        auto mask = _cvf.mask(mask_im, false);
-        auto image = _cvf.origin(mask_im, false);
-        auto im_info = QFileInfo(ui->statusBar->currentMessage());
-        auto im_name = im_info.fileName();
-        auto save_path = ui->le_save->text();
-        if (save_path == ""){
-            msg("保存路径为空");
-            return;
-        }
-        if(!(save_path.endsWith('/') || save_path.endsWith('\\'))){
-            save_path += '/';
-        }
-        auto dir = QDir(save_path);
-        if(!dir.exists()){
-            auto button = QMessageBox::information(this, "提示", "保存目录不存在，是否创建?", QMessageBox::Ok, QMessageBox::Cancel);
-            if(button == QMessageBox::Ok){
-                if(!dir.mkpath(save_path)){
-                    msg("创建保存目录失败，请检查保存是否有权限读写保存路径");
-                    return;
-                }
-            }
-        }
-        QDir origin_dir = save_path+("origin");
-        QDir mask_dir = save_path+"mask";
-        if(!origin_dir.exists()){
-            origin_dir.mkpath(origin_dir.absolutePath());
-        }
-        if(!mask_dir.exists()){
-            mask_dir.mkpath(mask_dir.absolutePath());
-        }
-        qDebug()<<origin_dir.absolutePath() +"/" +im_name;
-        if(!image.save(origin_dir.absolutePath() + "/"+im_name)){
-            msg("保存原图失败，请检查保存目录是否存在");
-        }
-        if(!mask.save(mask_dir.absolutePath() + "/"+im_name)){
-            msg("保存Mask图失败，请检查保存目录是否存在");
-        }
-        _image_updated = false;
-    }
+    save();
 }
 
 void MainWindow::on_cb_canny_mode_currentIndexChanged(const QString &arg1)
@@ -332,6 +364,27 @@ void MainWindow::on_cb_canny_mode_currentIndexChanged(const QString &arg1)
         _cvf.setCannySource(CVFunctions::USE_GARY);
     }else if(arg1 == "亮度图"){
         _cvf.setCannySource(CVFunctions::USE_LIGHT);
+    }else if(arg1 == "均衡化"){
+        _cvf.setCannySource(CVFunctions::USE_EQ_HIST);
     }
     setImage();
+}
+
+void MainWindow::on_pb_fullscreen_clicked()
+{
+    if(ui->la_origin->isVisible()){
+        ui->la_origin->setVisible(false);
+        ui->la_canny->setVisible(false);
+        ui->la_mask->setVisible(false);
+        auto width = ui->scrollArea->width();
+        auto height = ui->scrollArea->height();
+        ui->scrollArea->resize(int(round(width*(1.35))),height);
+    }else {
+        ui->la_origin->setVisible(true);
+        ui->la_canny->setVisible(true);
+        ui->la_mask->setVisible(true);
+        auto width = ui->scrollArea->width();
+        auto height = ui->scrollArea->height();
+        ui->scrollArea->resize(int(round(width*(1/1.35))),height);
+    }
 }

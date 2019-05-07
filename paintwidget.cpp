@@ -9,9 +9,6 @@
 PaintWidget::PaintWidget(QWidget *parent) :
     QWidget(parent), _isDrawing(false), _penSize(5), _scale(1), _maxHistorySize(10)
 {
-    _image = QImage(1,1,QImage::Format_RGB32);
-    backColor = qRgb(255,255,255);
-    _image.fill(backColor);
     _penColor = qRgb(255,255,255);
 }
 
@@ -65,7 +62,8 @@ QImage PaintWidget::drawedImage()
 }
 
 void PaintWidget::paintEvent(QPaintEvent *){
-
+    if(_image.isNull())
+        return;
     QPainter painter(this);
     painter.drawImage(0,0,_image.scaled(_size*_scale));
 }
@@ -79,7 +77,6 @@ void PaintWidget::mousePressEvent(QMouseEvent *event){
 }
 
 void PaintWidget::mouseMoveEvent(QMouseEvent *event){
-
     if(event->buttons() & Qt::LeftButton){
         endPoint = event->pos()/this->_scale;
         paint();
@@ -88,7 +85,7 @@ void PaintWidget::mouseMoveEvent(QMouseEvent *event){
 void PaintWidget::mouseReleaseEvent(QMouseEvent *event){
     Q_UNUSED(event);
     paint();
-    if(_isDrawing == true)
+    if(_isDrawing == true && !_image.isNull())
     {
         _history.push_back(_image);
         if(_history.size()>_maxHistorySize){
@@ -100,6 +97,8 @@ void PaintWidget::mouseReleaseEvent(QMouseEvent *event){
 }
 
 void PaintWidget::paint(){
+    if(_image.isNull())
+        return;
     QPainter p(&_image);
     QPen apen;
     apen.setColor(_penColor);

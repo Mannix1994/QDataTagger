@@ -23,7 +23,7 @@ public:
     };
     // 窗口类型，分别是Canny、原图+Canny、Mask、原图
     typedef enum {CANNY, WITH_CANNY, MASK, ORIGIN} WINDOW;
-    typedef enum {USE_GARY, USE_LIGHT} CANNY_SOURCE;
+    typedef enum {USE_GARY, USE_LIGHT, USE_EQ_HIST} CANNY_SOURCE;
 
     explicit CVFunctions(QObject *parent = nullptr);
     /**

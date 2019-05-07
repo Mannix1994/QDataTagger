@@ -89,7 +89,7 @@
     <property name="geometry">
      <rect>
       <x>1300</x>
-      <y>10</y>
+      <y>0</y>
       <width>91</width>
       <height>41</height>
      </rect>
@@ -102,7 +102,7 @@
     <property name="geometry">
      <rect>
       <x>1450</x>
-      <y>20</y>
+      <y>10</y>
       <width>91</width>
       <height>21</height>
      </rect>
@@ -115,7 +115,7 @@
     <property name="geometry">
      <rect>
       <x>1390</x>
-      <y>20</y>
+      <y>10</y>
       <width>48</width>
       <height>26</height>
      </rect>
@@ -137,7 +137,7 @@
     <property name="geometry">
      <rect>
       <x>1540</x>
-      <y>20</y>
+      <y>10</y>
       <width>48</width>
       <height>26</height>
      </rect>
@@ -213,7 +213,7 @@
     <property name="geometry">
      <rect>
       <x>1200</x>
-      <y>10</y>
+      <y>0</y>
       <width>41</width>
       <height>41</height>
      </rect>
@@ -226,7 +226,7 @@
     <property name="geometry">
      <rect>
       <x>1240</x>
-      <y>20</y>
+      <y>10</y>
       <width>41</width>
       <height>25</height>
      </rect>
@@ -335,7 +335,7 @@
    <widget class="QLabel" name="la_scale">
     <property name="geometry">
      <rect>
-      <x>480</x>
+      <x>610</x>
       <y>0</y>
       <width>51</width>
       <height>41</height>
@@ -348,7 +348,7 @@
    <widget class="QSpinBox" name="sb_scale">
     <property name="geometry">
      <rect>
-      <x>530</x>
+      <x>660</x>
       <y>10</y>
       <width>48</width>
       <height>26</height>
@@ -370,14 +370,14 @@
    <widget class="QSpinBox" name="sb_pensize">
     <property name="geometry">
      <rect>
-      <x>650</x>
+      <x>780</x>
       <y>10</y>
       <width>48</width>
       <height>26</height>
      </rect>
     </property>
     <property name="toolTip">
-     <string>笔的大小</string>
+     <string>W, 笔的大小</string>
     </property>
     <property name="minimum">
      <number>1</number>
@@ -392,7 +392,7 @@
    <widget class="QLabel" name="la_pensize">
     <property name="geometry">
      <rect>
-      <x>600</x>
+      <x>730</x>
       <y>0</y>
       <width>51</width>
       <height>41</height>
@@ -405,7 +405,7 @@
    <widget class="QPushButton" name="pb_cancel">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>380</x>
       <y>10</y>
       <width>89</width>
       <height>25</height>
@@ -424,7 +424,7 @@
    <widget class="QLabel" name="la_mode">
     <property name="geometry">
      <rect>
-      <x>720</x>
+      <x>850</x>
       <y>10</y>
       <width>51</width>
       <height>17</height>
@@ -437,14 +437,14 @@
    <widget class="QComboBox" name="cb_mode">
     <property name="geometry">
      <rect>
-      <x>770</x>
+      <x>900</x>
       <y>10</y>
       <width>61</width>
       <height>25</height>
      </rect>
     </property>
     <property name="toolTip">
-     <string>选择绘制模式</string>
+     <string>E, 选择绘制模式</string>
     </property>
     <item>
      <property name="text">
@@ -519,7 +519,7 @@
    <widget class="QLabel" name="la_canny_mode">
     <property name="geometry">
      <rect>
-      <x>850</x>
+      <x>980</x>
       <y>10</y>
       <width>67</width>
       <height>17</height>
@@ -532,9 +532,9 @@
    <widget class="QComboBox" name="cb_canny_mode">
     <property name="geometry">
      <rect>
-      <x>920</x>
+      <x>1050</x>
       <y>10</y>
-      <width>71</width>
+      <width>91</width>
       <height>25</height>
      </rect>
     </property>
@@ -548,6 +548,25 @@
       <string>亮度图</string>
      </property>
     </item>
+   </widget>
+   <widget class="QPushButton" name="pb_fullscreen">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>10</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>R, 放大绘制控件</string>
+    </property>
+    <property name="text">
+     <string>扩展</string>
+    </property>
+    <property name="shortcut">
+     <string>R</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
