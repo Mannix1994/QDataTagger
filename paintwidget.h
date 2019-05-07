@@ -16,6 +16,7 @@ class PaintWidget : public QWidget
 {
     Q_OBJECT
 public:
+    typedef enum {WHITE, GREEN, YELLOW} COLOR;
     explicit PaintWidget(QWidget *parent = nullptr);//------------构造函数
     /**
      * @brief setImage 设置当前要绘制的图像
@@ -38,7 +39,7 @@ public:
      * 区域中的Canny会被当成阴影边存到Mask中；黄色是手动标记的阴影边，会被
      * 保存到mask中；绿色是当前区域有不好标记的影音边，直接在原图中涂黑。
      */
-    void setPenColor(const QRgb &penColor);
+    void setPenColor(const COLOR &penColor);
     /**
      * @brief cancel 撤销上一次涂抹
      */
@@ -85,5 +86,8 @@ private:
     QSize _size;
     // 绘制的历史记录
     QList<QImage> _history;
+
+    // 支持新的绘制模式
+    QVector<QPoint> _two_points;
 };
 #endif

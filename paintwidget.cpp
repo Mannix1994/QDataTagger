@@ -40,9 +40,19 @@ void PaintWidget::setPenSize(int size)
     this->_penSize = size;
 }
 
-void PaintWidget::setPenColor(const QRgb &penColor)
+void PaintWidget::setPenColor(const COLOR &penColor)
 {
-    _penColor = penColor;
+    switch (penColor) {
+    case WHITE:
+        _penColor = qRgb(255, 255, 255);
+        break;
+    case YELLOW:
+        _penColor = qRgb(255, 255, 0);
+        break;
+    case GREEN:
+        _penColor = qRgb(0, 255, 0);
+        break;
+    }
 }
 
 void PaintWidget::cancel()
@@ -69,7 +79,29 @@ void PaintWidget::paintEvent(QPaintEvent *){
 }
 
 void PaintWidget::mousePressEvent(QMouseEvent *event){
-    if(event->button() == Qt::LeftButton){
+    if(event->button() == Qt::RightButton){
+        _two_points.push_back(event->pos()/this->_scale);
+        if(_two_points.size()>1){
+            // store old color
+            auto penc = _penColor;
+            auto pens = _penSize;
+            // set new color and pensize
+            _penColor = qRgb(255, 255, 0);
+            _penSize = 1;
+            // draw
+            lastPoint = _two_points[0];
+            endPoint = _two_points[1];
+            paint();
+            // clear
+            _two_points.clear();
+            // restore
+            _penColor = penc;
+            _penSize = pens;
+            _isDrawing = true;
+        }
+    }
+    else if(event->button() == Qt::LeftButton){
+        _two_points.clear();
         lastPoint = event->pos()/this->_scale;
         endPoint = event->pos()/this->_scale;
         _isDrawing = true;
@@ -84,7 +116,10 @@ void PaintWidget::mouseMoveEvent(QMouseEvent *event){
 }
 void PaintWidget::mouseReleaseEvent(QMouseEvent *event){
     Q_UNUSED(event);
-    paint();
+    //qDebug() << event->button();
+    if(event->button() == Qt::LeftButton){
+        paint();
+    }
     if(_isDrawing == true && !_image.isNull())
     {
         _history.push_back(_image);
