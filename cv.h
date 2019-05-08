@@ -19,10 +19,10 @@ public:
     {
     public:
         WINDDOW_STRING();
-        std::string CANNY, WITH_CANNY, MASK, ORIGIN;
+        std::string CANNY, WITH_CANNY, MASK, ORIGIN, ORIGIN_EDGE;
     };
     // 窗口类型，分别是Canny、原图+Canny、Mask、原图
-    typedef enum {CANNY, WITH_CANNY, MASK, ORIGIN} WINDOW;
+    typedef enum {CANNY, WITH_CANNY, MASK, ORIGIN, ORIGIN_EDGE} WINDOW;
     typedef enum {USE_GARY, USE_LIGHT, USE_EQ_HIST} CANNY_SOURCE;
 
     explicit CVFunctions(QObject *parent = nullptr);
@@ -100,6 +100,12 @@ public:
      * @param cs USE_GRAY就是使用灰度图，USE_LIGHT是使用亮度图。
      */
     void setCannySource(CANNY_SOURCE _cs);
+    /**
+     * @brief target 返回加了红色阴影边的原图
+     * @param show 是否显示
+     * @return 如果_mask为空，则返回空QImage
+     */
+    QImage target(bool show=false);
 private:
     /**
      * @brief canny_ 计算原图的Canny图

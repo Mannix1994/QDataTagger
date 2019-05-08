@@ -206,7 +206,9 @@ void CVFunctions::closeWindow(CVFunctions::WINDOW window)
         cv::namedWindow(_ws.ORIGIN);
         cv::destroyWindow(_ws.ORIGIN);
         break;
-    default:
+    case ORIGIN_EDGE:
+        cv::namedWindow(_ws.ORIGIN_EDGE);
+        cv::destroyWindow(_ws.ORIGIN_EDGE);
         break;
     }
 }
@@ -216,6 +218,27 @@ void CVFunctions::setCannySource(CVFunctions::CANNY_SOURCE cs)
     _cs = cs;
 }
 
+QImage CVFunctions::target(bool show)
+{
+    if(_mask.empty() || _origin.empty()){
+        return QImage();
+    }
+    auto im = _origin.clone();
+    for(int i=0;i<_origin.rows;++i){
+        for(int j=0;j<_origin.cols;++j){
+            auto val = _mask.at<uchar>(i, j);
+            if(val == 255)
+            {
+                im.at<cv::Vec3b>(i, j) = cv::Vec3b(0, 0, 255);
+            }
+        }
+    }
+    if(show){
+        showMat(_ws.ORIGIN_EDGE, im);
+    }
+    return toQImage(im);
+}
+
 cv::Mat CVFunctions::canny_(int blur, int threshold1, int threshold2)
 {
     cv::blur(_gray_or_light, _canny, cv::Size(blur, blur));
@@ -223,7 +246,5 @@ cv::Mat CVFunctions::canny_(int blur, int threshold1, int threshold2)
     return _canny;
 }
 
-CVFunctions::WINDDOW_STRING::WINDDOW_STRING():CANNY("Canny"), WITH_CANNY("原图+Canny"), MASK("Mask"), ORIGIN("原图")
-{
-
-}
+CVFunctions::WINDDOW_STRING::WINDDOW_STRING():CANNY("Canny"), WITH_CANNY("原图+Canny"),
+    MASK("Mask"), ORIGIN("原图"), ORIGIN_EDGE("原图+边"){}

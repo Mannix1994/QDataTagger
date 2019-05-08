@@ -68,7 +68,7 @@
       <x>50</x>
       <y>60</y>
       <width>1111</width>
-      <height>711</height>
+      <height>731</height>
      </rect>
     </property>
     <property name="widgetResizable">
@@ -80,7 +80,7 @@
        <x>0</x>
        <y>0</y>
        <width>1109</width>
-       <height>709</height>
+       <height>729</height>
       </rect>
      </property>
     </widget>
@@ -566,6 +566,22 @@
     </property>
     <property name="shortcut">
      <string>R</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cb_origin_edge">
+    <property name="geometry">
+     <rect>
+      <x>1070</x>
+      <y>810</y>
+      <width>101</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>显示原图+阴影边图</string>
+    </property>
+    <property name="text">
+     <string>原图+边图</string>
     </property>
    </widget>
   </widget>

@@ -73,6 +73,7 @@ void MainWindow::updateImages()
                             ui->cb_canny->isChecked());
     auto origin = _cvf.origin(ui->cb_origin->isChecked());
     auto mask = _cvf.mask(ui->cb_mask->isChecked());
+    _cvf.target(ui->cb_origin_edge->isChecked());
     ui->la_canny->setPixmap(QPixmap::fromImage(canny.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
     ui->la_origin->setPixmap(QPixmap::fromImage(origin.scaled(ui->la_origin->size(), Qt::KeepAspectRatio)));
     ui->la_mask->setPixmap(QPixmap::fromImage(mask.scaled(ui->la_mask->size(), Qt::KeepAspectRatio)));
@@ -119,6 +120,7 @@ bool MainWindow::save()
         auto mask_im = _area->drawedImage();
         auto mask = _cvf.mask(mask_im, false);
         auto image = _cvf.origin(mask_im, false);
+        auto target = _cvf.target(false);
         auto im_info = QFileInfo(ui->statusBar->currentMessage());
         auto im_name = im_info.fileName();
         auto save_path = ui->le_save->text();
@@ -141,11 +143,15 @@ bool MainWindow::save()
         }
         QDir origin_dir = save_path+("origin");
         QDir mask_dir = save_path+"mask";
+        QDir target_dir = save_path+"target";
         if(!origin_dir.exists()){
             origin_dir.mkpath(origin_dir.absolutePath());
         }
         if(!mask_dir.exists()){
             mask_dir.mkpath(mask_dir.absolutePath());
+        }
+        if(!target_dir.exists()){
+            target_dir.mkpath(target_dir.absolutePath());
         }
         qDebug()<<origin_dir.absolutePath() +"/" +im_name;
         if(!image.save(origin_dir.absolutePath() + "/"+im_name)){
@@ -154,6 +160,10 @@ bool MainWindow::save()
         }
         if(!mask.save(mask_dir.absolutePath() + "/"+im_name)){
             msg("保存Mask图失败，请检查保存目录是否存在");
+            return false;
+        }
+        if(!target.save(target_dir.absolutePath()+"/"+im_name)){
+            msg("保存target图失败，请检查保存目录是否存在");
             return false;
         }
         _image_updated = false;
@@ -298,6 +308,17 @@ void MainWindow::on_image_changed()
     }
     auto mask = _cvf.mask(im, ui->cb_mask->isChecked());
     ui->la_mask->setPixmap(QPixmap::fromImage(mask.scaled(ui->la_canny->size(), Qt::KeepAspectRatio)));
+    _cvf.target(ui->cb_origin_edge->isChecked());
+}
+
+void MainWindow::on_cb_origin_edge_clicked(bool checked)
+{
+    if (checked)
+    {
+       updateImages();
+    }
+    else
+        _cvf.closeWindow(CVFunctions::ORIGIN_EDGE);
 }
 
 void MainWindow::on_cb_origin_canny_clicked(bool checked)
