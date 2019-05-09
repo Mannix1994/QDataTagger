@@ -10,12 +10,13 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow), _area(new PaintWidget()), _image_updated(false)
+    ui(new Ui::MainWindow), _area(new PaintWidget(this)), _image_updated(false)
 {
     ui->setupUi(this);
     ui->scrollArea->setWidget(_area);
     connect(_area, &PaintWidget::imageChanged, this, &MainWindow::on_image_changed);
     setWindowTitle("QDataTagger");
+    setMinimumSize(size());
 }
 
 MainWindow::~MainWindow()
@@ -176,7 +177,7 @@ bool MainWindow::save()
 void MainWindow::keyPressEvent(QKeyEvent *e)
 {
     static bool showScrollBar=true;
-    if((e->modifiers() == Qt::ShiftModifier) && (e->key() == Qt::Key_S)){
+    if((e->modifiers() == Qt::CTRL)){
         //如果是Shift键，按一次隐藏滑动条，再按一次显示滑动条
         if(showScrollBar){
             ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -206,9 +207,69 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
         }else if(ui->cb_mode->currentIndex() == 2 ){
             ui->cb_mode->setCurrentIndex(0);
         }
+    }else if(e->key()==Qt::Key_S){
+        ui->sb_pensize->setValue(5);
     }
     // 其他按键事件在ui界面去修改
     e->accept();
+}
+
+void MainWindow::wheelEvent(QWheelEvent *e)
+{
+    if(e->modifiers() == Qt::ShiftModifier){
+        // 放大图像
+        static bool tag = true;
+        if(tag){
+            auto delta = e->delta();
+            auto val = ui->sb_scale->value();
+            auto new_val = 0;
+            if(delta>0){
+                new_val = val+1;
+                ui->sb_scale->setValue(new_val);
+            }else{
+                new_val = val-1;
+                ui->sb_scale->setValue(new_val);
+            }
+        }
+        tag = !tag;
+    }
+}
+
+void MainWindow::resizeEvent(QResizeEvent *e)
+{
+    auto size = e->size();
+    auto old_size = e->oldSize();
+    if(old_size == QSize(-1, -1))
+        return;
+    auto diff_x = size.width() - old_size.width();
+    auto diff_y = size.height() - old_size.height();
+    // 三个显示窗口
+    auto rect = ui->sa_show->geometry();
+    rect.setX(rect.x() + diff_x);
+    rect.setWidth(rect.width()+diff_x);
+    ui->sa_show->setGeometry(rect);
+    // cany选项
+    rect = ui->sa_canny_options->geometry();
+    rect.setX(rect.x() + diff_x);
+    rect.setWidth(rect.width()+diff_x);
+    ui->sa_canny_options->setGeometry(rect);
+    // 主窗口
+    rect = ui->scrollArea->geometry();
+    rect.setWidth(rect.width() + diff_x);
+    rect.setHeight(rect.height() + diff_y);
+    ui->scrollArea->setGeometry(rect);
+    // 显示选项
+    rect = ui->sa_show_options->geometry();
+    rect.setX(rect.x() + diff_x);
+    rect.setY(rect.y() + diff_y);
+    rect.setWidth(rect.width() + diff_x);
+    rect.setHeight(rect.height() + diff_y);
+    ui->sa_show_options->setGeometry(rect);
+    // 保存选项
+    rect = ui->sa_save_block->geometry();
+    rect.setY(rect.y() + diff_y);
+    rect.setHeight(rect.height() + diff_y);
+    ui->sa_save_block->setGeometry(rect);
 }
 
 void MainWindow::on_pb_open_clicked()
@@ -393,17 +454,13 @@ void MainWindow::on_cb_canny_mode_currentIndexChanged(const QString &arg1)
 
 void MainWindow::on_pb_fullscreen_clicked()
 {
-    if(ui->la_origin->isVisible()){
-        ui->la_origin->setVisible(false);
-        ui->la_canny->setVisible(false);
-        ui->la_mask->setVisible(false);
+    if(ui->sa_show->isVisible()){
+        ui->sa_show->setVisible(false);
         auto width = ui->scrollArea->width();
         auto height = ui->scrollArea->height();
         ui->scrollArea->resize(int(round(width*(1.35))),height);
     }else {
-        ui->la_origin->setVisible(true);
-        ui->la_canny->setVisible(true);
-        ui->la_mask->setVisible(true);
+        ui->sa_show->setVisible(true);
         auto width = ui->scrollArea->width();
         auto height = ui->scrollArea->height();
         ui->scrollArea->resize(int(round(width*(1/1.35))),height);

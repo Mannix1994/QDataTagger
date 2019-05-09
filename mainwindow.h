@@ -61,6 +61,12 @@ protected:
      * A是打开前一张，D是打开后一张。
      */
     void keyPressEvent(QKeyEvent *e);
+    /**
+     * @brief wheelEvent 鼠标滚轮事件
+     * @param e 通过鼠标滚轮控制画笔的大小
+     */
+    void wheelEvent(QWheelEvent* e);
+    void resizeEvent(QResizeEvent *e);
 
 private slots:
     // 打开图片列表文件
