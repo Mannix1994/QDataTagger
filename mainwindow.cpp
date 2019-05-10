@@ -458,11 +458,11 @@ void MainWindow::on_pb_fullscreen_clicked()
         ui->sa_show->setVisible(false);
         auto width = ui->scrollArea->width();
         auto height = ui->scrollArea->height();
-        ui->scrollArea->resize(int(round(width*(1.35))),height);
+        ui->scrollArea->resize(width + 390,height);
     }else {
         ui->sa_show->setVisible(true);
         auto width = ui->scrollArea->width();
         auto height = ui->scrollArea->height();
-        ui->scrollArea->resize(int(round(width*(1/1.35))),height);
+        ui->scrollArea->resize(width - 390,height);
     }
 }

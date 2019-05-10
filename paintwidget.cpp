@@ -19,6 +19,7 @@ void PaintWidget::setImage(QImage image)
     _image = image;
     _history.clear();
     _history.push_back(_image.copy());
+    _two_points.clear();
     update();
 }
 
