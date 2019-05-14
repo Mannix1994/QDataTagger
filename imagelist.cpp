@@ -20,16 +20,16 @@ bool ImageList::open(const QString &list_file)
         QTextStream ts(&f);
         while (!ts.atEnd()) {
             QString s = ts.readLine();
-            image_list.push_back(s);
+            image_list.push_back(ImageItem(s));
         }
         return true;
     }
     return false;
 }
 
-QString ImageList::pre()
+ImageItem ImageList::pre()
 {
-    QString s;
+    ImageItem s;
     if (index>0){
         --index;
         s = image_list[index];
@@ -37,9 +37,9 @@ QString ImageList::pre()
     return s;
 }
 
-QString ImageList::next()
+ImageItem ImageList::next()
 {
-    QString s;
+    ImageItem s;
     if (index<image_list.length()-1){
         ++index;
         s = image_list[index];
@@ -47,16 +47,26 @@ QString ImageList::next()
     return s;
 }
 
-QString ImageList::current()
+ImageItem ImageList::current()
 {
     if (image_list.size()>0)
         return image_list[index];
     else{
-        return "";
+        return ImageItem();
     }
 }
 
 bool ImageList::empty()
 {
     return image_list.empty();
+}
+
+ImageItem::ImageItem(QString a_line_of_list)
+{
+    QStringList sl = a_line_of_list.split(",");
+    if(sl.length() != 2){
+        qDebug() << "本行不是两个图像文件的路径. " << a_line_of_list;
+    }
+    _origin = sl[0];
+    _target_ps = sl[1];
 }

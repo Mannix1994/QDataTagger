@@ -4,6 +4,7 @@
 #include <QObject>
 #include <opencv2/opencv.hpp>
 #include <string>
+#include "imagelist.h"
 
 /**
  * @brief 管理当前图像的所有相关图像
@@ -23,7 +24,7 @@ public:
     };
     // 窗口类型，分别是Canny、原图+Canny、Mask、原图
     typedef enum {CANNY, WITH_CANNY, MASK, ORIGIN, ORIGIN_EDGE} WINDOW;
-    typedef enum {USE_GARY, USE_LIGHT, USE_EQ_HIST} CANNY_SOURCE;
+    typedef enum {USE_GARY, USE_LIGHT, USE_EQ_HIST, USE_PS} CANNY_SOURCE;
 
     explicit CVFunctions(QObject *parent = nullptr);
     /**
@@ -32,13 +33,13 @@ public:
      * @param im_path 图像的路径
      * @return 如果打开成功返回true，打开失败返回false
      */
-    bool open(const QString &im_path);
+    bool open(ImageItem &item);
     /**
      * @brief open 打开一张待处理的图像
      * @param image QImage图像对象
      * @return 如果打开成功返回true，打开失败返回false
      */
-    bool open(QImage &image);
+    bool open(QImage &origin, QImage &target_ps);
     /**
      * @brief isOpened 是否打开了一张图像
      * @return 打开了返回true，没打开返回false
@@ -123,6 +124,8 @@ private:
     void showMat(std::string title, cv::Mat &mat);
     // 原图
     cv::Mat _origin;
+    // 从PS来的原图
+    cv::Mat _target_ps;
     // 把_origin的每个像素减去1，这样我在主窗口用的标记就不会有重复值
     cv::Mat _origin_1;
     // Mask图像

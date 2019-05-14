@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     ui->scrollArea->setWidget(_area);
     connect(_area, &PaintWidget::imageChanged, this, &MainWindow::on_image_changed);
-    setWindowTitle("QDataTagger");
+    setWindowTitle("QDataCleaner");
     setMinimumSize(size());
 }
 
@@ -26,25 +26,25 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::setImage(QString im_path)
+void MainWindow::setImage(ImageItem item)
 {
-    if (im_path==""){
-        im_path = _imageList.current();
+    if (item.empty()){
+        item = _imageList.current();
     }
-    if(im_path==""){
+    if(item.empty()){
         msg("检查是否打开包含图片列表的文件");
         return;
     }
-    if(!_cvf.open(im_path)){
-        msg("图像: \"" + im_path + "\" 无法打开");
+    if(!_cvf.open(item)){
+        msg("图像: \"" + item.target_ps() + "\" 无法打开");
         return;
     }
-    if(checkExisted(im_path)){
-        setWindowTitle("QDataTagger ("+QFileInfo(im_path).fileName()+" 已处理过)");
+    if(checkExisted(item.origin())){
+        setWindowTitle("QDataCleaner ("+QFileInfo(item.target_ps()).fileName()+" 已处理过)");
     }else{
-        setWindowTitle("QDataTagger ("+QFileInfo(im_path).fileName()+")");
+        setWindowTitle("QDataCleaner ("+QFileInfo(item.target_ps()).fileName()+")");
     }
-    ui->statusBar->showMessage(im_path);
+    ui->statusBar->showMessage(item.target_ps());
     auto withCanny = _cvf.withCanny(ui->cb_blur->currentText().toInt(), ui->sb_threshold1->value(), ui->sb_threshold2->value(),
                                     ui->cb_origin_canny->isChecked());
     _area->setImage(withCanny);
@@ -290,24 +290,24 @@ void MainWindow::on_pb_pre_clicked()
 {
     if(!checkSaved())
         return;
-    auto im_path = _imageList.pre();
-    if(!im_path.length()){
+    auto item = _imageList.pre();
+    if(!item.origin().length()){
         msg("没有上一张了啦");
         return;
     }
-    setImage(im_path);
+    setImage(item);
 }
 
 void MainWindow::on_pb_next_clicked()
 {
     if(!checkSaved())
         return;
-    auto im_path = _imageList.next();
-    if(!im_path.length()){
+    auto item = _imageList.next();
+    if(!item.origin().length()){
         msg("没有下一张了啦");
         return;
     }
-    setImage(im_path);
+    setImage(item);
 }
 
 void MainWindow::on_sb_threshold1_valueChanged(int arg1)
@@ -443,11 +443,17 @@ void MainWindow::on_pb_save_clicked()
 void MainWindow::on_cb_canny_mode_currentIndexChanged(const QString &arg1)
 {
     if(arg1=="灰度图"){
+        ui->sb_threshold1->setValue(50);
+        ui->sb_threshold2->setValue(120);
         _cvf.setCannySource(CVFunctions::USE_GARY);
     }else if(arg1 == "亮度图"){
+        ui->sb_threshold1->setValue(50);
+        ui->sb_threshold2->setValue(120);
         _cvf.setCannySource(CVFunctions::USE_LIGHT);
-    }else if(arg1 == "均衡化"){
-        _cvf.setCannySource(CVFunctions::USE_EQ_HIST);
+    }else if(arg1 == "PS图"){
+        ui->sb_threshold1->setValue(80);
+        ui->sb_threshold2->setValue(200);
+        _cvf.setCannySource(CVFunctions::USE_PS);
     }
     setImage();
 }

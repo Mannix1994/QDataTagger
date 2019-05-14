@@ -8,33 +8,44 @@ CVFunctions::CVFunctions(QObject *parent) : QObject(parent), _open(false), _cs(U
 
 }
 
-bool CVFunctions::open(const QString &im_path)
+bool CVFunctions::open(ImageItem &item)
 {
-    QImage im;
-    if(im.load(im_path)){
-        return this->open(im);
+    QImage origin, target_ps;
+    if(origin.load(item.origin()) && target_ps.load(item.target_ps())){
+        return this->open(origin, target_ps);
     }else{
         return false;
     }
 
 }
 
-bool CVFunctions::open(QImage &image)
+bool CVFunctions::open(QImage &origin, QImage& target_ps)
 {
     _open = false;
     // 检查图像是否为空
-    if (image.isNull()){
+    if (origin.isNull() || target_ps.isNull()){
         return false;
     }
     // 把QImage转换为cv::Mat
-    _origin = toMat(image, true);
-    // 统一转换为三通道的图
+    _origin = toMat(origin, true);
+    _target_ps = toMat(target_ps, true);
+    // 统一转换为三通道的图，原图
     if (_origin.type() == CV_8UC4){
         cv::cvtColor(_origin, _origin, cv::COLOR_BGRA2BGR);
     }else if(_origin.type() == CV_8UC3){
         // 不做操作
     }else if(_origin.type() == CV_8UC1){
         cv::cvtColor(_origin, _origin, cv::COLOR_GRAY2BGR);
+    }else{
+        QMessageBox::critical(nullptr, "警告", "错误33: 不支持此类型的图像");
+    }
+    // 统一转换为三通道的图，从PS来的目标图
+    if (_target_ps.type() == CV_8UC4){
+        cv::cvtColor(_target_ps, _target_ps, cv::COLOR_BGRA2BGR);
+    }else if(_target_ps.type() == CV_8UC3){
+        // 不做操作
+    }else if(_target_ps.type() == CV_8UC1){
+        cv::cvtColor(_target_ps, _target_ps, cv::COLOR_GRAY2BGR);
     }else{
         QMessageBox::critical(nullptr, "警告", "错误33: 不支持此类型的图像");
     }
@@ -58,7 +69,7 @@ bool CVFunctions::open(QImage &image)
         //cv::imshow("msf", _gray_or_light);
         //cv::waitKey(1);
     }
-    else{
+    else if(_cs != USE_PS){
         QMessageBox::critical(nullptr, "警告", "错误81: 暂时不支持此Canny源");
     }
     //cv::imshow("light", _gray_or_light);
@@ -241,9 +252,23 @@ QImage CVFunctions::target(bool show)
 
 cv::Mat CVFunctions::canny_(int blur, int threshold1, int threshold2)
 {
-    cv::blur(_gray_or_light, _canny, cv::Size(blur, blur));
-    cv::Canny(_canny, _canny, threshold1, threshold2);
-    return _canny;
+    if( _cs != USE_PS){
+        cv::blur(_gray_or_light, _canny, cv::Size(blur, blur));
+        cv::Canny(_canny, _canny, threshold1, threshold2);
+        return _canny;
+    }else {
+        _canny.setTo(0);
+        for(int i=0;i<_target_ps.rows;++i){
+            for(int j=0;j<_target_ps.cols;++j){
+                auto val = _target_ps.at<cv::Vec3b>(i, j);
+                if(val[2] > threshold2 && val[1] < threshold1 && val[1] < threshold1)
+                {
+                    _canny.at<uchar>(i, j) =255;
+                }
+            }
+        }
+        return _canny;
+    }
 }
 
 CVFunctions::WINDDOW_STRING::WINDDOW_STRING():CANNY("Canny"), WITH_CANNY("原图+Canny"),

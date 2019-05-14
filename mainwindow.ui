@@ -253,6 +253,11 @@
       <string>亮度图</string>
      </property>
     </item>
+    <item>
+     <property name="text">
+      <string>PS图</string>
+     </property>
+    </item>
    </widget>
    <widget class="QPushButton" name="pb_fullscreen">
     <property name="geometry">

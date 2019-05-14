@@ -24,7 +24,7 @@ private:
      * @param im_path 要设置的图像路径。如果为空，则在图片列表中取出“当前”
      * 图像；路径并设置。
      */
-    void setImage(QString im_path="");
+    void setImage(ImageItem im_path=ImageItem());
     /**
      * @brief msg 显示信息
      * @param content 内容
