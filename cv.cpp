@@ -100,8 +100,8 @@ QImage CVFunctions::withCanny(int blur, int threshold1, int threshold2, bool sho
     cv::Mat mat = _origin_1.clone();
     if(mat.type() == CV_8UC3)
     {
-        for(int i=0;i<_origin_1.rows;++i){
-            for(int j=0;j<_origin_1.cols;++j){
+        for(int i=1;i<_origin_1.rows-1;++i){
+            for(int j=1;j<_origin_1.cols-1;++j){
                 if(_canny.at<uchar>(i, j)==255){
                     mat.at<cv::Vec3b>(i, j) = cv::Vec3b(0, 0, 255);
                 }
@@ -135,8 +135,8 @@ QImage CVFunctions::mask(const QImage &image, bool show)
     _mask.setTo(cv::Scalar::all(0));
     if(im.type() == CV_8UC3)
     {
-        for(int i=0;i<_origin_1.rows;++i){
-            for(int j=0;j<_origin_1.cols;++j){
+        for(int i=1;i<_origin_1.rows-1;++i){
+            for(int j=1;j<_origin_1.cols-1;++j){
                 auto val = im.at<cv::Vec3b>(i, j);
                 if(val == cv::Vec3b(0, 255, 0))
                     continue;
@@ -172,8 +172,8 @@ QImage CVFunctions::origin(const QImage &image, bool show)
     auto im = _origin.clone();
     if(mask_im.type() == CV_8UC3)
     {
-        for(int i=0;i<_origin_1.rows;++i){
-            for(int j=0;j<_origin_1.cols;++j){
+        for(int i=1;i<_origin_1.rows-1;++i){
+            for(int j=1;j<_origin_1.cols-1;++j){
                 auto val = mask_im.at<cv::Vec3b>(i, j);
                 if(val == cv::Vec3b(0, 255, 0))
                 {
@@ -235,8 +235,8 @@ QImage CVFunctions::target(bool show)
         return QImage();
     }
     auto im = _origin.clone();
-    for(int i=0;i<_origin.rows;++i){
-        for(int j=0;j<_origin.cols;++j){
+    for(int i=1;i<_origin.rows-1;++i){
+        for(int j=1;j<_origin.cols-1;++j){
             auto val = _mask.at<uchar>(i, j);
             if(val == 255)
             {
@@ -258,8 +258,8 @@ cv::Mat CVFunctions::canny_(int blur, int threshold1, int threshold2)
         return _canny;
     }else {
         _canny.setTo(0);
-        for(int i=0;i<_target_ps.rows;++i){
-            for(int j=0;j<_target_ps.cols;++j){
+        for(int i=1;i<_target_ps.rows-1;++i){
+            for(int j=1;j<_target_ps.cols-1;++j){
                 auto val = _target_ps.at<cv::Vec3b>(i, j);
                 if(val[2] > threshold2 && val[1] < threshold1 && val[1] < threshold1)
                 {
