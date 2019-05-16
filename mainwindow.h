@@ -89,7 +89,7 @@ private slots:
     // “标记”是手动绘制阴影边；“消除”是把不容易绘制影音边的地方涂黑。
     void on_cb_mode_currentIndexChanged(const QString &arg1);
     // 绘制控件中的图像发生了变化
-    void on_image_changed();
+    void on_imageChanged();
     // 原图加边图
     void on_cb_origin_edge_clicked(bool checked);
     // 显示原图+Canny图

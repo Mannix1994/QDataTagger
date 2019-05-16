@@ -412,7 +412,7 @@
        </rect>
       </property>
       <property name="toolTip">
-       <string>Canny函数的threshhold1</string>
+       <string>threshhold1</string>
       </property>
       <property name="minimum">
        <number>1</number>
@@ -493,7 +493,7 @@
        </rect>
       </property>
       <property name="toolTip">
-       <string>Canny函数的threshhold2</string>
+       <string>threshhold2</string>
       </property>
       <property name="minimum">
        <number>1</number>
@@ -653,7 +653,7 @@
        <string>保存</string>
       </property>
       <property name="shortcut">
-       <string>G</string>
+       <string>Space</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="le_save">
