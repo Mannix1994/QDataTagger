@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->scrollArea->setWidget(_area);
-    connect(_area, &PaintWidget::imageChanged, this, &MainWindow::on_image_changed);
+    connect(_area, &PaintWidget::imageChanged, this, &MainWindow::on_imageChanged);
     setWindowTitle("QDataTagger");
     setMinimumSize(size());
 }
@@ -358,7 +358,7 @@ void MainWindow::on_cb_mode_currentIndexChanged(const QString &arg1)
     }
 }
 
-void MainWindow::on_image_changed()
+void MainWindow::on_imageChanged()
 {
     _image_updated = true;
     auto im = _area->drawedImage();
