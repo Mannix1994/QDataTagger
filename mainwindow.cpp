@@ -140,6 +140,8 @@ bool MainWindow::save()
                     msg("创建保存目录失败，请检查保存是否有权限读写保存路径");
                     return false;
                 }
+            }else {
+                return false;
             }
         }
         QDir origin_dir = save_path+("origin");
