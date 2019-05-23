@@ -141,6 +141,9 @@ bool MainWindow::save()
                     return false;
                 }
             }
+            else {
+                 return false;
+            }
         }
         QDir origin_dir = save_path+("origin");
         QDir mask_dir = save_path+"mask";
